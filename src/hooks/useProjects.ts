@@ -33,5 +33,13 @@ export function useProjects() {
     })
   }
 
-  return { projects, addProject, deleteProject }
+  function updateProject(id: string, patch: Partial<Project>) {
+    setProjects(prev => {
+      const next = prev.map(p => p.id === id ? { ...p, ...patch } : p)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+      return next
+    })
+  }
+
+  return { projects, addProject, deleteProject, updateProject }
 }

@@ -61,4 +61,25 @@ describe('useProjects', () => {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
     expect(stored).toHaveLength(0)
   })
+
+  it('updateProject merges patch and persists to localStorage', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([sampleProject]))
+    const { result } = renderHook(() => useProjects())
+    act(() => {
+      result.current.updateProject('test-1', { synopsis: 'A great script' })
+    })
+    expect(result.current.projects[0].synopsis).toBe('A great script')
+    expect(result.current.projects[0].title).toBe('Test Script')
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
+    expect(stored[0].synopsis).toBe('A great script')
+  })
+
+  it('updateProject does nothing when id is not found', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([sampleProject]))
+    const { result } = renderHook(() => useProjects())
+    act(() => {
+      result.current.updateProject('nonexistent', { synopsis: 'Should not appear' })
+    })
+    expect(result.current.projects[0].synopsis).toBeUndefined()
+  })
 })
