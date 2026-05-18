@@ -295,9 +295,9 @@ but free.`,
         relationships: ['Major 2nd 5 in Fire']
       }
     ],
+    acts: [],
     scenes: [],
-    looseDialogues: [],
-    looseNotes: []
+    sketches: []
   },
   {
     id: '2',
@@ -307,8 +307,8 @@ but free.`,
     lastEditedAt: '2026-05-11T10:00:00Z',
     createdAt: '2026-04-15T10:00:00Z',
     characters: [],
+    acts: [],
     scenes: [],
-    looseDialogues: [],
-    looseNotes: []
+    sketches: []
   },
 ]

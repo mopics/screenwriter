@@ -28,7 +28,7 @@ describe('Dashboard', () => {
 
   it('renders project cards from mock data', () => {
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
-    expect(screen.getByText('The Last Signal')).toBeInTheDocument()
+    expect(screen.getByText('Never Been Known To Fail')).toBeInTheDocument()
   })
 
   it('opens modal when New Project button is clicked', async () => {

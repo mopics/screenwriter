@@ -12,6 +12,10 @@ const sampleProject: Project = {
   draftNumber: 1,
   lastEditedAt: '2026-05-18T10:00:00Z',
   createdAt: '2026-05-18T10:00:00Z',
+  characters: [],
+  acts: [],
+  scenes: [],
+  sketches: [],
 }
 
 describe('useProjects', () => {
@@ -26,7 +30,7 @@ describe('useProjects', () => {
   it('initializes with mockProjects when localStorage is empty', () => {
     const { result } = renderHook(() => useProjects())
     expect(result.current.projects.length).toBeGreaterThan(0)
-    expect(result.current.projects[0].title).toBe('The Last Signal')
+    expect(result.current.projects[0].title).toBe('Never Been Known To Fail')
   })
 
   it('initializes with stored projects when localStorage has data', () => {
