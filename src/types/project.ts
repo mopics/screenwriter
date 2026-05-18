@@ -1,3 +1,5 @@
+import type { Character } from "./character"
+
 export type Genre = 'FEATURE' | 'SHORT' | 'TV PILOT' | 'MINI-SERIES'
 
 export type Project = {
@@ -6,5 +8,10 @@ export type Project = {
   genre: Genre
   draftNumber: number
   lastEditedAt: string
-  createdAt: string
+  createdAt: string,
+  synopsis?: string,
+  characters: Character[],
+  scenes: string[],
+  looseDialogues: string[],
+  looseNotes: string[]
 }

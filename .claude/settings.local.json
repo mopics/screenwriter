@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\pedi\\\\Desktop\\\\ecode\\\\screenwriter\" -Recurse -Depth 2)",
+      "Bash(Select-Object -Property FullName)",
+      "Bash(Format-Table -AutoSize)"
+    ]
+  }
+}
