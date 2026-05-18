@@ -6,8 +6,8 @@ import { ProjectGrid } from './ProjectGrid'
 import type { Project } from '../types/project'
 
 const projects: Project[] = [
-  { id: '1', title: 'Script One', genre: 'FEATURE', draftNumber: 1, lastEditedAt: '2026-05-18T10:00:00Z', createdAt: '2026-05-01T10:00:00Z' },
-  { id: '2', title: 'Script Two', genre: 'SHORT', draftNumber: 2, lastEditedAt: '2026-05-17T10:00:00Z', createdAt: '2026-05-01T10:00:00Z' },
+  { id: '1', title: 'Script One', genre: 'FEATURE', draftNumber: 1, lastEditedAt: '2026-05-18T10:00:00Z', createdAt: '2026-05-01T10:00:00Z', characters: [], acts: [], scenes: [], sketches: [] },
+  { id: '2', title: 'Script Two', genre: 'SHORT', draftNumber: 2, lastEditedAt: '2026-05-17T10:00:00Z', createdAt: '2026-05-01T10:00:00Z', characters: [], acts: [], scenes: [], sketches: [] },
 ]
 
 describe('ProjectGrid', () => {

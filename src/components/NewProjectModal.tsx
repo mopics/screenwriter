@@ -28,6 +28,10 @@ export function NewProjectModal({ onClose, onCreate }: NewProjectModalProps) {
       draftNumber: 1,
       lastEditedAt: now,
       createdAt: now,
+      characters: [],
+      acts: [],
+      scenes: [],
+      sketches: [],
     })
   }
 

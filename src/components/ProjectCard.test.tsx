@@ -11,6 +11,10 @@ const project: Project = {
   draftNumber: 3,
   lastEditedAt: '2026-05-16T10:00:00Z',
   createdAt: '2026-03-01T10:00:00Z',
+  characters: [],
+  acts: [],
+  scenes: [],
+  sketches: [],
 }
 
 describe('ProjectCard', () => {
