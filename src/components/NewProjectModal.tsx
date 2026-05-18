@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Project, Genre } from '../types/project'
 
 const GENRES: Genre[] = ['FEATURE', 'SHORT', 'TV PILOT', 'MINI-SERIES']
@@ -11,6 +11,12 @@ type NewProjectModalProps = {
 export function NewProjectModal({ onClose, onCreate }: NewProjectModalProps) {
   const [title, setTitle] = useState('')
   const [genre, setGenre] = useState<Genre>('FEATURE')
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
 
   function handleSubmit() {
     if (!title.trim()) return
@@ -30,7 +36,6 @@ export function NewProjectModal({ onClose, onCreate }: NewProjectModalProps) {
       data-testid="modal-backdrop"
       className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
       onClick={onClose}
-      onKeyDown={e => e.key === 'Escape' && onClose()}
     >
       <div
         className="bg-[#0d0d14] border-t-2 border-t-[#c9a227] border border-[#1a1a2e] rounded-lg p-6 w-full max-w-md mx-4"

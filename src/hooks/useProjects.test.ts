@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useProjects } from './useProjects'
 import type { Project } from '../types/project'
@@ -16,6 +16,10 @@ const sampleProject: Project = {
 
 describe('useProjects', () => {
   beforeEach(() => {
+    localStorage.clear()
+  })
+
+  afterEach(() => {
     localStorage.clear()
   })
 

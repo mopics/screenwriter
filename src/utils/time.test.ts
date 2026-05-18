@@ -31,7 +31,11 @@ describe('relativeTime', () => {
     expect(relativeTime('2026-05-04T10:00:00Z')).toBe('2 weeks ago')
   })
 
-  it('returns "1 month ago" for ~30 days', () => {
-    expect(relativeTime('2026-04-18T10:00:00Z')).toBe('1 month ago')
+  it('returns "4 weeks ago" for 28 days', () => {
+    expect(relativeTime('2026-04-20T10:00:00Z')).toBe('4 weeks ago')
+  })
+
+  it('returns "1 month ago" for ~35 days', () => {
+    expect(relativeTime('2026-04-13T10:00:00Z')).toBe('1 month ago')
   })
 })

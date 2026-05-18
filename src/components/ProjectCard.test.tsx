@@ -1,19 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { ProjectCard } from './ProjectCard'
 import type { Project } from '../types/project'
-
-const mockNavigate = vi.fn()
-
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate
-  }
-})
 
 const project: Project = {
   id: 'abc',
@@ -32,7 +21,6 @@ describe('ProjectCard', () => {
 
   afterEach(() => {
     vi.useRealTimers()
-    mockNavigate.mockReset()
   })
 
   it('renders the project title', () => {
@@ -51,12 +39,9 @@ describe('ProjectCard', () => {
     expect(screen.getByText(/2 days ago/)).toBeInTheDocument()
   })
 
-  it('navigates to /project/:id on click', async () => {
-    vi.useRealTimers()
-    const user = userEvent.setup()
+  it('links to /project/:id', () => {
     render(<MemoryRouter><ProjectCard project={project} /></MemoryRouter>)
-    await user.click(screen.getByText('The Last Signal'))
-    expect(mockNavigate).toHaveBeenCalledWith('/project/abc')
-    vi.useFakeTimers()
+    const link = screen.getByRole('link')
+    expect(link).toHaveAttribute('href', '/project/abc')
   })
 })
