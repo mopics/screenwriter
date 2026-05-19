@@ -35,6 +35,8 @@ describe('SceneEditor', () => {
   beforeEach(() => {
     vi.mocked(useProjectsModule.useProjects).mockReturnValue({
       projects: [mockProject],
+      loading: false,
+      error: null,
       addProject: vi.fn(),
       deleteProject: vi.fn(),
       updateProject: vi.fn(),
@@ -102,6 +104,8 @@ describe('SceneEditor', () => {
     }
     vi.mocked(useProjectsModule.useProjects).mockReturnValue({
       projects: [projectWithChar],
+      loading: false,
+      error: null,
       addProject: vi.fn(),
       deleteProject: vi.fn(),
       updateProject: vi.fn(),

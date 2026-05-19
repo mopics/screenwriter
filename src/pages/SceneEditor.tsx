@@ -12,9 +12,17 @@ import type { Project } from '../types/project'
 
 export function SceneEditor() {
   const { id } = useParams<{ id: string }>()
-  const { projects, updateProject } = useProjects()
+  const { projects, loading, updateProject } = useProjects()
   const [activeSection, setActiveSection] = useState<SectionKey>('synopsis')
   const [selectedId, setSelectedId] = useState<string | null>(null)
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <p className="text-[#555] text-sm tracking-widest">Loading…</p>
+      </div>
+    )
+  }
 
   const project = projects.find(p => p.id === id)
 

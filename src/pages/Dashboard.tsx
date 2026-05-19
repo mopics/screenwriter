@@ -7,14 +7,22 @@ import { useProjects } from '../hooks/useProjects'
 import type { Project } from '../types/project'
 
 export function Dashboard() {
-  const { projects, addProject } = useProjects()
+  const { projects, loading, addProject } = useProjects()
   const [modalOpen, setModalOpen] = useState(false)
   const navigate = useNavigate()
 
-  function handleCreate(project: Project) {
-    addProject(project)
+  async function handleCreate(project: Project) {
+    await addProject(project)
     setModalOpen(false)
     navigate(`/project/${project.id}`)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <p className="text-[#555] text-sm tracking-widest">Loading…</p>
+      </div>
+    )
   }
 
   return (
