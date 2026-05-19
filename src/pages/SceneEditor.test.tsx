@@ -99,7 +99,7 @@ describe('SceneEditor', () => {
         id: 'c1', name: 'Alice', pronouns: [], groups: [], otherNames: [],
         personality: '', physicalDescription: '', motivation: '',
         internalConflict: '', strengths: '', weaknesses: '',
-        characterArc: '', dialogueStyle: '', backstory: '', relationships: [],
+        characterArc: '', dialogueStyle: '', backstory: '', relationships: [], expandedFields: [],
       }],
     }
     vi.mocked(useProjectsModule.useProjects).mockReturnValue({
