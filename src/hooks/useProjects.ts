@@ -1,45 +1,55 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Project } from '../types/project'
-import { mockProjects } from '../data/mockProjects'
-
-const STORAGE_KEY = 'sw_projects'
-
-function loadProjects(): Project[] {
-  const raw = localStorage.getItem(STORAGE_KEY)
-  if (!raw) return mockProjects
-  try {
-    return JSON.parse(raw) as Project[]
-  } catch {
-    return mockProjects
-  }
-}
 
 export function useProjects() {
-  const [projects, setProjects] = useState<Project[]>(loadProjects)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  function addProject(project: Project) {
-    setProjects(prev => {
-      const next = [...prev, project]
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-      return next
+  useEffect(() => {
+    fetch('/api/projects')
+      .then(r => {
+        if (!r.ok) throw new Error('Failed to load projects')
+        return r.json() as Promise<Project[]>
+      })
+      .then(data => {
+        setProjects(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        setError((err as Error).message)
+        setLoading(false)
+      })
+  }, [])
+
+  async function addProject(project: Project) {
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(project),
     })
+    if (!res.ok) return
+    setProjects(prev => [...prev, project])
   }
 
-  function deleteProject(id: string) {
-    setProjects(prev => {
-      const next = prev.filter(p => p.id !== id)
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-      return next
-    })
+  async function deleteProject(id: string) {
+    const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' })
+    if (!res.ok) return
+    setProjects(prev => prev.filter(p => p.id !== id))
   }
 
-  function updateProject(id: string, patch: Partial<Project>) {
-    setProjects(prev => {
-      const next = prev.map(p => p.id === id ? { ...p, ...patch } : p)
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-      return next
+  async function updateProject(id: string, patch: Partial<Project>) {
+    const project = projects.find(p => p.id === id)
+    if (!project) return
+    const updated = { ...project, ...patch }
+    const res = await fetch(`/api/projects/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated),
     })
+    if (!res.ok) return
+    setProjects(prev => prev.map(p => p.id === id ? updated : p))
   }
 
-  return { projects, addProject, deleteProject, updateProject }
+  return { projects, loading, error, addProject, deleteProject, updateProject }
 }

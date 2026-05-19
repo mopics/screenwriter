@@ -1,9 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { renderHook, act, waitFor } from '@testing-library/react'
 import { useProjects } from './useProjects'
 import type { Project } from '../types/project'
-
-const STORAGE_KEY = 'sw_projects'
 
 const sampleProject: Project = {
   id: 'test-1',
@@ -18,68 +16,76 @@ const sampleProject: Project = {
   sketches: [],
 }
 
+function mockFetch(data: unknown, ok = true) {
+  return vi.fn().mockResolvedValue({
+    ok,
+    json: () => Promise.resolve(data),
+  })
+}
+
 describe('useProjects', () => {
   beforeEach(() => {
-    localStorage.clear()
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
-  afterEach(() => {
-    localStorage.clear()
-  })
-
-  it('initializes with mockProjects when localStorage is empty', () => {
+  it('starts with loading=true then fetches projects on mount', async () => {
+    vi.stubGlobal('fetch', mockFetch([sampleProject]))
     const { result } = renderHook(() => useProjects())
-    expect(result.current.projects.length).toBeGreaterThan(0)
-    expect(result.current.projects[0].title).toBe('Never Been Known To Fail')
-  })
-
-  it('initializes with stored projects when localStorage has data', () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([sampleProject]))
-    const { result } = renderHook(() => useProjects())
+    expect(result.current.loading).toBe(true)
+    await waitFor(() => expect(result.current.loading).toBe(false))
     expect(result.current.projects).toHaveLength(1)
     expect(result.current.projects[0].title).toBe('Test Script')
+    expect(fetch).toHaveBeenCalledWith('/api/projects')
   })
 
-  it('addProject adds to list and persists to localStorage', () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([]))
+  it('sets error when initial fetch fails', async () => {
+    vi.stubGlobal('fetch', mockFetch(null, false))
     const { result } = renderHook(() => useProjects())
-    act(() => {
-      result.current.addProject(sampleProject)
-    })
-    expect(result.current.projects).toHaveLength(1)
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
-    expect(stored[0].id).toBe('test-1')
-  })
-
-  it('deleteProject removes project and persists to localStorage', () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([sampleProject]))
-    const { result } = renderHook(() => useProjects())
-    act(() => {
-      result.current.deleteProject('test-1')
-    })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    expect(result.current.error).toBe('Failed to load projects')
     expect(result.current.projects).toHaveLength(0)
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
-    expect(stored).toHaveLength(0)
   })
 
-  it('updateProject merges patch and persists to localStorage', () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([sampleProject]))
+  it('addProject POSTs to API and appends to state', async () => {
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(sampleProject) }))
     const { result } = renderHook(() => useProjects())
-    act(() => {
-      result.current.updateProject('test-1', { synopsis: 'A great script' })
-    })
-    expect(result.current.projects[0].synopsis).toBe('A great script')
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    await act(async () => { await result.current.addProject(sampleProject) })
+    expect(result.current.projects).toHaveLength(1)
+    expect(fetch).toHaveBeenCalledWith('/api/projects', expect.objectContaining({ method: 'POST' }))
+  })
+
+  it('deleteProject DELETEs from API and removes from state', async () => {
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([sampleProject]) })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ ok: true }) }))
+    const { result } = renderHook(() => useProjects())
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    await act(async () => { await result.current.deleteProject('test-1') })
+    expect(result.current.projects).toHaveLength(0)
+    expect(fetch).toHaveBeenCalledWith('/api/projects/test-1', expect.objectContaining({ method: 'DELETE' }))
+  })
+
+  it('updateProject PUTs merged project and updates state', async () => {
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([sampleProject]) })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ ...sampleProject, synopsis: 'Great script' }) }))
+    const { result } = renderHook(() => useProjects())
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    await act(async () => { await result.current.updateProject('test-1', { synopsis: 'Great script' }) })
+    expect(result.current.projects[0].synopsis).toBe('Great script')
     expect(result.current.projects[0].title).toBe('Test Script')
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)!)
-    expect(stored[0].synopsis).toBe('A great script')
   })
 
-  it('updateProject does nothing when id is not found', () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([sampleProject]))
+  it('updateProject does nothing when id not found', async () => {
+    vi.stubGlobal('fetch', mockFetch([sampleProject]))
     const { result } = renderHook(() => useProjects())
-    act(() => {
-      result.current.updateProject('nonexistent', { synopsis: 'Should not appear' })
-    })
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    await act(async () => { await result.current.updateProject('nonexistent', { synopsis: 'Nope' }) })
     expect(result.current.projects[0].synopsis).toBeUndefined()
+    expect(fetch).toHaveBeenCalledTimes(1)
   })
 })
