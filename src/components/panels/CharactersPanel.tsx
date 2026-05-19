@@ -52,11 +52,10 @@ export function CharactersPanel({ project, onUpdate, selectedId, onSelectId }: P
             <button
               key={c.id}
               onClick={() => onSelectId(c.id)}
-              className={`w-full text-left px-4 py-2 text-sm border-l-2 transition-colors ${
-                c.id === selectedId
-                  ? 'border-l-[#c9a227] text-[#c8c8d8] bg-[#14141f]'
-                  : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-[#0f0f1a]'
-              }`}
+              className={`w-full text-left px-4 py-2 text-sm border-l-2 transition-colors ${c.id === selectedId
+                ? 'border-l-[#c9a227] text-[#c8c8d8] bg-[#14141f]'
+                : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-[#0f0f1a]'
+                }`}
             >
               {c.name || 'Unnamed character'}
             </button>
@@ -100,12 +99,11 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
   }
 
   function toggleField(key: string) {
-    const isExpanded = character.expandedFields.includes(key)
+    const current = character.expandedFields ?? []
+    const isExpanded = current.includes(key)
     onChange({
       ...character,
-      expandedFields: isExpanded
-        ? character.expandedFields.filter(k => k !== key)
-        : [...character.expandedFields, key],
+      expandedFields: isExpanded ? current.filter(k => k !== key) : [...current, key],
     })
   }
 
@@ -138,7 +136,7 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
       </div>
       <div className="space-y-4">
         {fields.map(({ key, label, type }) => {
-          const isExpanded = type === 'textarea' && character.expandedFields.includes(key as string)
+          const isExpanded = type === 'textarea' && (character.expandedFields ?? []).includes(key as string)
           return (
             <div key={key}>
               {type === 'textarea' ? (
