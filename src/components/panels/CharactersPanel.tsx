@@ -99,6 +99,16 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
     update(field, raw.split(',').map(s => s.trim()).filter(Boolean))
   }
 
+  function toggleField(key: string) {
+    const isExpanded = character.expandedFields.includes(key)
+    onChange({
+      ...character,
+      expandedFields: isExpanded
+        ? character.expandedFields.filter(k => k !== key)
+        : [...character.expandedFields, key],
+    })
+  }
+
   const fields: Array<{ key: keyof Character; label: string; type: 'input' | 'textarea' | 'csv' }> = [
     { key: 'name', label: 'Name', type: 'input' },
     { key: 'pronouns', label: 'Pronouns', type: 'csv' },
@@ -127,33 +137,51 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
         </button>
       </div>
       <div className="space-y-4">
-        {fields.map(({ key, label, type }) => (
-          <div key={key}>
-            <label className="block text-xs text-[#888] mb-1 uppercase tracking-wider">{label}</label>
-            {type === 'input' && (
-              <input
-                value={character[key] as string}
-                onChange={e => update(key, e.target.value)}
-                className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
-              />
-            )}
-            {type === 'textarea' && (
-              <textarea
-                value={character[key] as string}
-                onChange={e => update(key, e.target.value)}
-                rows={4}
-                className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50 resize-y"
-              />
-            )}
-            {type === 'csv' && (
-              <input
-                value={(character[key] as string[]).join(', ')}
-                onChange={e => updateCsv(key, e.target.value)}
-                className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
-              />
-            )}
-          </div>
-        ))}
+        {fields.map(({ key, label, type }) => {
+          const isExpanded = type === 'textarea' && character.expandedFields.includes(key as string)
+          return (
+            <div key={key}>
+              {type === 'textarea' ? (
+                <button
+                  onClick={() => toggleField(key as string)}
+                  className="flex items-center gap-1.5 w-full text-left text-xs text-[#888] mb-1 uppercase tracking-wider hover:text-[#aaa] transition-colors"
+                >
+                  <span className="text-[8px]">{isExpanded ? '▼' : '▶'}</span>
+                  {label}
+                </button>
+              ) : (
+                <label className="block text-xs text-[#888] mb-1 uppercase tracking-wider">{label}</label>
+              )}
+              {type === 'input' && (
+                <input
+                  value={character[key] as string}
+                  onChange={e => update(key, e.target.value)}
+                  className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
+                />
+              )}
+              {type === 'textarea' && isExpanded && (
+                <textarea
+                  value={character[key] as string}
+                  onChange={e => update(key, e.target.value)}
+                  rows={4}
+                  className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50 resize-y"
+                />
+              )}
+              {type === 'textarea' && !isExpanded && (
+                <div className="text-xs text-[#555] italic px-1 py-0.5 truncate">
+                  {(character[key] as string) || '— empty —'}
+                </div>
+              )}
+              {type === 'csv' && (
+                <input
+                  value={(character[key] as string[]).join(', ')}
+                  onChange={e => updateCsv(key, e.target.value)}
+                  className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
+                />
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

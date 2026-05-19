@@ -54,7 +54,7 @@ describe('CharactersPanel', () => {
   it('shows editor form fields when a character is selected', () => {
     render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId="c1" onSelectId={() => {}} />)
     expect(screen.getByDisplayValue('Alice')).toBeDefined()
-    expect(screen.getByDisplayValue('Driven')).toBeDefined()
+    expect(screen.getByText('Driven')).toBeDefined()
   })
 
   it('shows placeholder prompt when no character is selected', () => {
@@ -98,5 +98,42 @@ describe('CharactersPanel', () => {
     expect(onUpdate).toHaveBeenCalledWith({
       characters: [{ ...alice, name: 'Alicia' }],
     })
+  })
+
+  it('does not render textarea for collapsed fields', () => {
+    render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId="c1" onSelectId={() => {}} />)
+    expect(screen.queryByDisplayValue('Driven')).toBeNull()
+  })
+
+  it('shows preview text for a collapsed textarea field with content', () => {
+    render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId="c1" onSelectId={() => {}} />)
+    expect(screen.getByText('Driven')).toBeDefined()
+  })
+
+  it('expands a textarea field when its label is clicked', () => {
+    const onUpdate = vi.fn()
+    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => {}} />)
+    fireEvent.click(screen.getByRole('button', { name: /personality/i }))
+    expect(onUpdate).toHaveBeenCalledWith({
+      characters: [{ ...alice, expandedFields: ['personality'] }],
+    })
+  })
+
+  it('collapses an expanded textarea field when its label is clicked', () => {
+    const onUpdate = vi.fn()
+    const aliceExpanded = { ...alice, expandedFields: ['personality'] }
+    const project = { ...baseProject, characters: [aliceExpanded] }
+    render(<CharactersPanel project={project} onUpdate={onUpdate} selectedId="c1" onSelectId={() => {}} />)
+    expect(screen.getByDisplayValue('Driven')).toBeDefined()
+    fireEvent.click(screen.getByRole('button', { name: /personality/i }))
+    expect(onUpdate).toHaveBeenCalledWith({
+      characters: [{ ...aliceExpanded, expandedFields: [] }],
+    })
+  })
+
+  it('shows "— empty —" for a collapsed textarea field with no content', () => {
+    const aliceEmptyPersonality = { ...alice, personality: '' }
+    render(<CharactersPanel project={{ ...baseProject, characters: [aliceEmptyPersonality] }} onUpdate={() => {}} selectedId="c1" onSelectId={() => {}} />)
+    expect(screen.getAllByText('— empty —').length).toBeGreaterThan(0)
   })
 })
