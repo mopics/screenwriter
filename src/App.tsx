@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Dashboard } from './pages/Dashboard'
-import { ProjectPlaceholder } from './pages/ProjectPlaceholder'
+import { SceneEditor } from './pages/SceneEditor'
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/project/:id" element={<ProjectPlaceholder />} />
+        <Route path="/project/:id" element={<SceneEditor />} />
       </Routes>
     </BrowserRouter>
   )
