@@ -14,4 +14,5 @@ export type Character = {
     dialogueStyle: string,
     backstory: string,
     relationships: string[],
+    expandedFields: string[]
 }

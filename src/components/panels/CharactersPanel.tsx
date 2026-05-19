@@ -28,6 +28,7 @@ export function CharactersPanel({ project, onUpdate, selectedId, onSelectId }: P
       dialogueStyle: '',
       backstory: '',
       relationships: [],
+      expandedFields: [],
     }
     onUpdate({ characters: [...project.characters, newChar] })
     onSelectId(newChar.id)

@@ -20,6 +20,7 @@ const alice: Character = {
   dialogueStyle: 'Direct',
   backstory: 'Grew up alone',
   relationships: [],
+  expandedFields: [],
 }
 
 const baseProject: Project = {
