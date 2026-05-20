@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import type { Project } from '../../types/project'
 import type { Sketch } from '../../types/sketch'
+import { useResize } from '../../hooks/useResize'
 
 type Props = {
   project: Project
@@ -10,6 +11,8 @@ type Props = {
 }
 
 export function SketchesPanel({ project, onUpdate, selectedId, onSelectId }: Props) {
+  const { width: outerWidth, dragHandleProps: outerDragHandleProps } = useResize(360, 200, 600, 'left')
+  const { width: listWidth, dragHandleProps: listDragHandleProps } = useResize(208)
   const selectedSketch = project.sketches.find(s => s.id === selectedId) ?? null
 
   function addSketch() {
@@ -28,8 +31,12 @@ export function SketchesPanel({ project, onUpdate, selectedId, onSelectId }: Pro
   }
 
   return (
-    <div className="flex flex-1 overflow-hidden">
-      <div className="w-52 border-r border-[#1a1a2e] flex flex-col overflow-hidden">
+    <div
+      className="relative shrink-0 flex overflow-hidden border-l border-[#1a1a2e]"
+      style={{ width: outerWidth }}
+    >
+      <div {...outerDragHandleProps} />
+      <div className="relative shrink-0 border-r border-[#1a1a2e] flex flex-col overflow-hidden" style={{ width: listWidth }}>
         <div className="flex-1 overflow-y-auto">
           {project.sketches.map(sketch => (
             <button
@@ -37,8 +44,8 @@ export function SketchesPanel({ project, onUpdate, selectedId, onSelectId }: Pro
               onClick={() => onSelectId(sketch.id)}
               className={`w-full text-left px-4 py-2 text-sm border-l-2 transition-colors ${
                 sketch.id === selectedId
-                  ? 'border-l-[#c9a227] text-[#c8c8d8] bg-[#14141f]'
-                  : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-[#0f0f1a]'
+                  ? 'border-l-[#c9a227] text-[#c8c8d8] bg-panelSelect'
+                  : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-panelHover'
               }`}
             >
               {sketchTitle(sketch)}
@@ -51,8 +58,9 @@ export function SketchesPanel({ project, onUpdate, selectedId, onSelectId }: Pro
         >
           + New Sketch
         </button>
+        <div {...listDragHandleProps} />
       </div>
-      <div className="flex-1 flex flex-col p-6">
+      <div className="flex-1 flex flex-col p-6 overflow-hidden">
         {selectedSketch ? (
           <SketchEditor
             key={selectedSketch.id}
