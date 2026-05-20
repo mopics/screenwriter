@@ -7,7 +7,7 @@ import { SynopsisPanel } from '../components/panels/SynopsisPanel'
 import { CharactersPanel } from '../components/panels/CharactersPanel'
 import { ActsPanel } from '../components/panels/ActsPanel'
 import { ScenesPanel } from '../components/panels/ScenesPanel'
-import { SketchesPanel } from '../components/panels/SketchesPanel'
+import { RightPanel } from '../components/RightPanel'
 import type { Project } from '../types/project'
 
 export function SceneEditor() {
@@ -63,7 +63,7 @@ export function SceneEditor() {
         {activeSection === 'characters' && <CharactersPanel {...panelProps} />}
         {activeSection === 'acts' && <ActsPanel {...panelProps} />}
         {activeSection === 'scenes' && <ScenesPanel {...panelProps} />}
-        <SketchesPanel {...panelProps} />
+        <RightPanel {...panelProps} />
       </div>
     </div>
   )

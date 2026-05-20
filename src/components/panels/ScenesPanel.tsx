@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import type { Project } from '../../types/project'
 import type { Scene, SceneBlock } from '../../types/scene'
+import { useResize } from '../../hooks/useResize'
+import { useCappedDebounce } from '../../hooks/useCappedDebounce'
 
 type Props = {
   project: Project
@@ -9,6 +12,7 @@ type Props = {
 }
 
 export function ScenesPanel({ project, onUpdate, selectedId, onSelectId }: Props) {
+  const { width, dragHandleProps } = useResize(208)
   const sortedActs = [...project.acts].sort((a, b) => a.order - b.order)
   const selectedScene = project.scenes.find(s => s.id === selectedId) ?? null
 
@@ -55,7 +59,7 @@ export function ScenesPanel({ project, onUpdate, selectedId, onSelectId }: Props
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      <div className="w-52 border-r border-[#1a1a2e] flex flex-col overflow-hidden">
+      <div className="relative shrink-0 border-r border-[#1a1a2e] flex flex-col overflow-hidden" style={{ width }}>
         <div className="flex-1 overflow-y-auto">
           {sortedActs.map(act => {
             const actScenes = act.sceneIds
@@ -70,11 +74,10 @@ export function ScenesPanel({ project, onUpdate, selectedId, onSelectId }: Props
                   <button
                     key={scene.id}
                     onClick={() => onSelectId(scene.id)}
-                    className={`w-full text-left px-4 py-2 text-xs border-l-2 transition-colors ${
-                      scene.id === selectedId
-                        ? 'border-l-[#c9a227] text-[#c8c8d8] bg-[#14141f]'
-                        : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-[#0f0f1a]'
-                    }`}
+                    className={`w-full text-left px-4 py-2 text-xs border-l-2 transition-colors ${scene.id === selectedId
+                        ? 'border-l-[#c9a227] text-[#c8c8d8] bg-panelSelect'
+                        : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-panelHover'
+                      }`}
                   >
                     {scene.slugLine || 'Untitled scene'}
                   </button>
@@ -92,10 +95,11 @@ export function ScenesPanel({ project, onUpdate, selectedId, onSelectId }: Props
         >
           + Add Scene
         </button>
+        <div {...dragHandleProps} />
       </div>
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 scrollbar">
         {selectedScene ? (
-          <SceneBlockEditor scene={selectedScene} onChange={updateScene} />
+          <SceneBlockEditor key={selectedScene.id} scene={selectedScene} onChange={updateScene} />
         ) : (
           <p className="text-[#555] text-sm">Select a scene to edit</p>
         )}
@@ -105,8 +109,16 @@ export function ScenesPanel({ project, onUpdate, selectedId, onSelectId }: Props
 }
 
 function SceneBlockEditor({ scene, onChange }: { scene: Scene; onChange: (s: Scene) => void }) {
+  const [local, setLocal] = useState(scene)
+  const debouncedOnChange = useCappedDebounce(onChange)
+
+  function persist(updated: Scene) {
+    setLocal(updated)
+    debouncedOnChange(updated)
+  }
+
   function updateBlocks(blocks: SceneBlock[]) {
-    onChange({ ...scene, blocks })
+    persist({ ...local, blocks })
   }
 
   function addBlock(type: 'action' | 'dialogue') {
@@ -114,27 +126,27 @@ function SceneBlockEditor({ scene, onChange }: { scene: Scene; onChange: (s: Sce
       type === 'action'
         ? { type: 'action', text: '' }
         : { type: 'dialogue', data: { character: '', line: '' } }
-    updateBlocks([...scene.blocks, block])
+    updateBlocks([...local.blocks, block])
   }
 
   function updateBlock(idx: number, block: SceneBlock) {
-    updateBlocks(scene.blocks.map((b, i) => i === idx ? block : b))
+    updateBlocks(local.blocks.map((b, i) => i === idx ? block : b))
   }
 
   function deleteBlock(idx: number) {
-    updateBlocks(scene.blocks.filter((_, i) => i !== idx))
+    updateBlocks(local.blocks.filter((_, i) => i !== idx))
   }
 
   return (
     <div>
       <input
-        value={scene.slugLine}
-        onChange={e => onChange({ ...scene, slugLine: e.target.value })}
+        value={local.slugLine}
+        onChange={e => persist({ ...local, slugLine: e.target.value })}
         placeholder="INT. LOCATION - DAY"
         className="w-full bg-transparent border-b border-[#1a1a2e] pb-2 mb-6 text-sm text-[#c9a227] uppercase tracking-wider outline-none placeholder-[#333]"
       />
       <div className="space-y-4">
-        {scene.blocks.map((block, idx) => (
+        {local.blocks.map((block, idx) => (
           <div key={idx} className="group relative">
             {block.type === 'action' ? (
               <textarea

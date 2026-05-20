@@ -88,7 +88,7 @@ describe('SceneEditor', () => {
 
   it('renders SketchesPanel permanently on the right', () => {
     renderWithRouter('1')
-    expect(screen.getByText('Select a sketch to edit')).toBeDefined()
+    expect(screen.getByText('+ New Sketch')).toBeDefined()
   })
 
   it('resets selectedId to null when switching sections', () => {

@@ -1,0 +1,144 @@
+<h2>Collapsible textareas — which style?</h2>
+<p class="subtitle">How should the collapsed state look and behave?</p>
+
+<style>
+  .demo-panel {
+    background: #0a0a14;
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .demo-field { margin-bottom: 12px; }
+  .demo-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    margin-bottom: 6px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .demo-label:hover { color: #aaa; }
+  .demo-chevron { font-size: 8px; transition: transform 0.15s; }
+  .demo-chevron.open { transform: rotate(90deg); }
+  .demo-textarea {
+    width: 100%;
+    background: #0f0f1a;
+    border: 1px solid #1a1a2e;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #c8c8d8;
+    resize: vertical;
+    box-sizing: border-box;
+    min-height: 80px;
+  }
+  .demo-preview {
+    font-size: 12px;
+    color: #555;
+    padding: 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-style: italic;
+  }
+  .demo-preview.has-value { color: #888; }
+  .split { gap: 16px; }
+  .mockup-body { padding: 16px; }
+</style>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo-panel">
+        <div class="demo-field">
+          <div class="demo-label"><span class="demo-chevron open">▶</span> Personality</div>
+          <textarea class="demo-textarea" rows="3" readonly>Ruthlessly pragmatic. Hides empathy behind sharp wit and deflection. Loyal to a fault once trust is earned.</textarea>
+        </div>
+        <div class="demo-field">
+          <div class="demo-label"><span class="demo-chevron">▶</span> Physical Description</div>
+          <!-- collapsed: empty space -->
+        </div>
+        <div class="demo-field">
+          <div class="demo-label"><span class="demo-chevron">▶</span> Motivation</div>
+        </div>
+        <div class="demo-field">
+          <div class="demo-label"><span class="demo-chevron open">▶</span> Backstory</div>
+          <textarea class="demo-textarea" rows="3" readonly>Grew up in a military family, relocated every two years. Never learned to stay...</textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Chevron toggle, label only</h3>
+      <p>Collapsed fields show just the label with a ▶ chevron. Click label to expand. Clean, minimal.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo-panel">
+        <div class="demo-field">
+          <div class="demo-label"><span class="demo-chevron open">▶</span> Personality</div>
+          <textarea class="demo-textarea" rows="3" readonly>Ruthlessly pragmatic. Hides empathy behind sharp wit and deflection. Loyal to a fault once trust is earned.</textarea>
+        </div>
+        <div class="demo-field">
+          <div class="demo-label"><span class="demo-chevron">▶</span> Physical Description</div>
+          <div class="demo-preview">— empty —</div>
+        </div>
+        <div class="demo-field">
+          <div class="demo-label"><span class="demo-chevron">▶</span> Motivation</div>
+          <div class="demo-preview">— empty —</div>
+        </div>
+        <div class="demo-field">
+          <div class="demo-label"><span class="demo-chevron open">▶</span> Backstory</div>
+          <textarea class="demo-textarea" rows="3" readonly>Grew up in a military family, relocated every two years. Never learned to stay...</textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Chevron toggle + text preview</h3>
+      <p>Collapsed fields show a one-line preview of the text (or "— empty —"). Lets you scan content at a glance.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="demo-panel">
+        <div class="demo-field">
+          <div class="demo-label" style="justify-content: space-between;">
+            <span>Personality</span>
+            <span style="color:#c9a227; font-size:9px; letter-spacing:0.05em;">COLLAPSE ALL · EXPAND ALL</span>
+          </div>
+          <textarea class="demo-textarea" rows="3" readonly>Ruthlessly pragmatic. Hides empathy behind sharp wit...</textarea>
+        </div>
+        <div class="demo-field">
+          <div class="demo-label">Physical Description</div>
+          <textarea class="demo-textarea" rows="3" readonly style="opacity:0.4; font-style:italic; font-size:11px;">empty</textarea>
+        </div>
+        <div class="demo-field">
+          <div class="demo-label">Motivation</div>
+          <textarea class="demo-textarea" rows="3" readonly style="opacity:0.4; font-style:italic; font-size:11px;">empty</textarea>
+        </div>
+        <div class="demo-field">
+          <div class="demo-label">Backstory</div>
+          <textarea class="demo-textarea" rows="3" readonly>Grew up in a military family...</textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Collapse all / Expand all</h3>
+      <p>No per-field toggles. Two buttons at the top collapse or expand all textareas at once. All start expanded.</p>
+    </div>
+  </div>
+
+</div>

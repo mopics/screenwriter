@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import type { Character } from '../../types/character'
 import type { Project } from '../../types/project'
+import { useResize } from '../../hooks/useResize'
+import { useCappedDebounce } from '../../hooks/useCappedDebounce'
 
 type Props = {
   project: Project
@@ -9,6 +12,7 @@ type Props = {
 }
 
 export function CharactersPanel({ project, onUpdate, selectedId, onSelectId }: Props) {
+  const { width, dragHandleProps } = useResize(208)
   const selectedChar = project.characters.find(c => c.id === selectedId) ?? null
 
   function addCharacter() {
@@ -46,15 +50,15 @@ export function CharactersPanel({ project, onUpdate, selectedId, onSelectId }: P
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      <div className="w-52 border-r border-[#1a1a2e] flex flex-col overflow-hidden">
+      <div className="relative shrink-0 border-r border-[#1a1a2e] flex flex-col overflow-hidden" style={{ width }}>
         <div className="flex-1 overflow-y-auto">
           {project.characters.map(c => (
             <button
               key={c.id}
               onClick={() => onSelectId(c.id)}
               className={`w-full text-left px-4 py-2 text-sm border-l-2 transition-colors ${c.id === selectedId
-                ? 'border-l-[#c9a227] text-[#c8c8d8] bg-[#14141f]'
-                : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-[#0f0f1a]'
+                ? 'border-l-[#c9a227] text-[#c8c8d8] bg-panelSelect'
+                : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-panelHover'
                 }`}
             >
               {c.name || 'Unnamed character'}
@@ -67,10 +71,12 @@ export function CharactersPanel({ project, onUpdate, selectedId, onSelectId }: P
         >
           + Add Character
         </button>
+        <div {...dragHandleProps} />
       </div>
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 scrollbar">
         {selectedChar ? (
           <CharacterEditor
+            key={selectedChar.id}
             character={selectedChar}
             onChange={updateChar}
             onDelete={() => deleteChar(selectedChar.id)}
@@ -90,8 +96,13 @@ type EditorProps = {
 }
 
 function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
+  const [local, setLocal] = useState(character)
+  const debouncedOnChange = useCappedDebounce(onChange)
+
   function update(field: keyof Character, value: string | string[]) {
-    onChange({ ...character, [field]: value })
+    const updated = { ...local, [field]: value }
+    setLocal(updated)
+    debouncedOnChange(updated)
   }
 
   function updateCsv(field: keyof Character, raw: string) {
@@ -99,12 +110,14 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
   }
 
   function toggleField(key: string) {
-    const current = character.expandedFields ?? []
+    const current = local.expandedFields ?? []
     const isExpanded = current.includes(key)
-    onChange({
-      ...character,
+    const updated = {
+      ...local,
       expandedFields: isExpanded ? current.filter(k => k !== key) : [...current, key],
-    })
+    }
+    setLocal(updated)
+    onChange(updated)
   }
 
   const fields: Array<{ key: keyof Character; label: string; type: 'input' | 'textarea' | 'csv' }> = [
@@ -136,7 +149,7 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
       </div>
       <div className="space-y-4">
         {fields.map(({ key, label, type }) => {
-          const isExpanded = type === 'textarea' && (character.expandedFields ?? []).includes(key as string)
+          const isExpanded = type === 'textarea' && (local.expandedFields ?? []).includes(key as string)
           return (
             <div key={key}>
               {type === 'textarea' ? (
@@ -152,29 +165,29 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
               )}
               {type === 'input' && (
                 <input
-                  value={character[key] as string}
+                  value={local[key] as string}
                   onChange={e => update(key, e.target.value)}
-                  className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
+                  className="w-full bg-[#0f0f0f] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#ccc] outline-none focus:border-[#c9a227]/50"
                 />
               )}
               {type === 'textarea' && isExpanded && (
                 <textarea
-                  value={character[key] as string}
+                  value={local[key] as string}
                   onChange={e => update(key, e.target.value)}
                   rows={4}
-                  className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50 resize-y"
+                  className="w-full bg-[#0f0f0f] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#ccc] outline-none focus:border-[#c9a227]/50 resize-y"
                 />
               )}
               {type === 'textarea' && !isExpanded && (
                 <div className="text-xs text-[#555] italic px-1 py-0.5 truncate">
-                  {(character[key] as string) || '— empty —'}
+                  {(local[key] as string) || '— empty —'}
                 </div>
               )}
               {type === 'csv' && (
                 <input
-                  value={(character[key] as string[]).join(', ')}
+                  value={(local[key] as string[]).join(', ')}
                   onChange={e => updateCsv(key, e.target.value)}
-                  className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
+                  className="w-full bg-[#0f0f0f] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
                 />
               )}
             </div>

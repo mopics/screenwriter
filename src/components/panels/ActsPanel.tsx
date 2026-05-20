@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import type { Project } from '../../types/project'
 import type { Act } from '../../types/act'
 import type { Scene } from '../../types/scene'
+import { useResize } from '../../hooks/useResize'
+import { useCappedDebounce } from '../../hooks/useCappedDebounce'
 
 type Props = {
   project: Project
@@ -10,6 +13,7 @@ type Props = {
 }
 
 export function ActsPanel({ project, onUpdate, selectedId, onSelectId }: Props) {
+  const { width, dragHandleProps } = useResize(208)
   const sortedActs = [...project.acts].sort((a, b) => a.order - b.order)
   const selectedAct = project.acts.find(a => a.id === selectedId) ?? null
 
@@ -36,23 +40,22 @@ export function ActsPanel({ project, onUpdate, selectedId, onSelectId }: Props) 
     if (direction === 'down' && idx === act.sceneIds.length - 1) return
     const newIds = [...act.sceneIds]
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
-    ;[newIds[idx], newIds[swapIdx]] = [newIds[swapIdx], newIds[idx]]
+      ;[newIds[idx], newIds[swapIdx]] = [newIds[swapIdx], newIds[idx]]
     updateAct({ ...act, sceneIds: newIds })
   }
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      <div className="w-52 border-r border-[#1a1a2e] flex flex-col overflow-hidden">
+      <div className="relative shrink-0 border-r border-[#1a1a2e] flex flex-col overflow-hidden" style={{ width }}>
         <div className="flex-1 overflow-y-auto">
           {sortedActs.map(act => (
             <div key={act.id}>
               <button
                 onClick={() => onSelectId(act.id)}
-                className={`w-full text-left px-4 py-2 text-sm border-l-2 transition-colors ${
-                  act.id === selectedId
-                    ? 'border-l-[#c9a227] text-[#c8c8d8] bg-[#14141f]'
-                    : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-[#0f0f1a]'
-                }`}
+                className={`w-full text-left px-4 py-2 text-sm border-l-2 transition-colors ${act.id === selectedId
+                    ? 'border-l-[#c9a227] text-[#c8c8d8] bg-panelSelect'
+                    : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-panelHover'
+                  }`}
               >
                 {act.title}
               </button>
@@ -73,10 +76,12 @@ export function ActsPanel({ project, onUpdate, selectedId, onSelectId }: Props) 
         >
           + Add Act
         </button>
+        <div {...dragHandleProps} />
       </div>
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 scrollbar">
         {selectedAct ? (
           <ActEditor
+            key={selectedAct.id}
             act={selectedAct}
             scenes={project.scenes}
             onChange={updateAct}
@@ -98,13 +103,21 @@ type ActEditorProps = {
 }
 
 function ActEditor({ act, scenes, onChange, onMoveScene }: ActEditorProps) {
+  const [title, setTitle] = useState(act.title)
+  const debouncedOnChange = useCappedDebounce(onChange)
+
+  function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setTitle(e.target.value)
+    debouncedOnChange({ ...act, title: e.target.value })
+  }
+
   return (
     <div>
       <div className="mb-6">
         <label className="block text-xs text-[#888] mb-1 uppercase tracking-wider">Title</label>
         <input
-          value={act.title}
-          onChange={e => onChange({ ...act, title: e.target.value })}
+          value={title}
+          onChange={handleTitleChange}
           className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
         />
       </div>

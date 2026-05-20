@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import type { Project } from '../../types/project'
 import type { Sketch } from '../../types/sketch'
-import { useResize } from '../../hooks/useResize'
+import { useCappedDebounce } from '../../hooks/useCappedDebounce'
 
 type Props = {
   project: Project
@@ -10,19 +10,31 @@ type Props = {
   onSelectId: (id: string | null) => void
 }
 
-export function SketchesPanel({ project, onUpdate, selectedId, onSelectId }: Props) {
-  const { width: outerWidth, dragHandleProps: outerDragHandleProps } = useResize(360, 200, 600, 'left')
-  const { width: listWidth, dragHandleProps: listDragHandleProps } = useResize(208)
-  const selectedSketch = project.sketches.find(s => s.id === selectedId) ?? null
+export function SketchesPanel({ project, onUpdate }: Props) {
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+
+  function toggleExpanded(id: string) {
+    setExpandedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   function addSketch() {
     const newSketch: Sketch = { id: crypto.randomUUID(), text: '' }
     onUpdate({ sketches: [...project.sketches, newSketch] })
-    onSelectId(newSketch.id)
+    setExpandedIds(prev => new Set([...prev, newSketch.id]))
   }
 
   function updateSketch(id: string, text: string) {
     onUpdate({ sketches: project.sketches.map(s => s.id === id ? { ...s, text } : s) })
+  }
+
+  function deleteSketch(id: string) {
+    onUpdate({ sketches: project.sketches.filter(s => s.id !== id) })
+    setExpandedIds(prev => { const next = new Set(prev); next.delete(id); return next })
   }
 
   function sketchTitle(sketch: Sketch): string {
@@ -31,73 +43,81 @@ export function SketchesPanel({ project, onUpdate, selectedId, onSelectId }: Pro
   }
 
   return (
-    <div
-      className="relative shrink-0 flex overflow-hidden border-l border-[#1a1a2e]"
-      style={{ width: outerWidth }}
-    >
-      <div {...outerDragHandleProps} />
-      <div className="relative shrink-0 border-r border-[#1a1a2e] flex flex-col overflow-hidden" style={{ width: listWidth }}>
-        <div className="flex-1 overflow-y-auto">
-          {project.sketches.map(sketch => (
-            <button
-              key={sketch.id}
-              onClick={() => onSelectId(sketch.id)}
-              className={`w-full text-left px-4 py-2 text-sm border-l-2 transition-colors ${
-                sketch.id === selectedId
-                  ? 'border-l-[#c9a227] text-[#c8c8d8] bg-panelSelect'
-                  : 'border-l-transparent text-[#888] hover:text-[#c8c8d8] hover:bg-panelHover'
-              }`}
-            >
-              {sketchTitle(sketch)}
-            </button>
-          ))}
-        </div>
-        <button
-          onClick={addSketch}
-          className="m-3 py-2 text-xs text-[#c9a227] border border-[#c9a227]/30 rounded hover:bg-[#c9a227]/10 transition-colors"
-        >
-          + New Sketch
-        </button>
-        <div {...listDragHandleProps} />
-      </div>
-      <div className="flex-1 flex flex-col p-6 overflow-hidden">
-        {selectedSketch ? (
-          <SketchEditor
-            key={selectedSketch.id}
-            sketch={selectedSketch}
-            onChange={(text) => updateSketch(selectedSketch.id, text)}
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
+        {project.sketches.map(sketch => (
+          <SketchCard
+            key={sketch.id}
+            sketch={sketch}
+            title={sketchTitle(sketch)}
+            expanded={expandedIds.has(sketch.id)}
+            onToggle={() => toggleExpanded(sketch.id)}
+            onChange={(text) => updateSketch(sketch.id, text)}
+            onDelete={() => deleteSketch(sketch.id)}
           />
-        ) : (
-          <p className="text-[#555] text-sm">Select a sketch to edit</p>
-        )}
+        ))}
       </div>
+      <button
+        onClick={addSketch}
+        className="m-3 py-2 text-xs text-[#c9a227] border border-[#c9a227]/30 rounded hover:bg-[#c9a227]/10 transition-colors shrink-0"
+      >
+        + New Sketch
+      </button>
     </div>
   )
 }
 
-function SketchEditor({
+function SketchCard({
   sketch,
+  title,
+  expanded,
+  onToggle,
   onChange,
+  onDelete,
 }: {
   sketch: Sketch
+  title: string
+  expanded: boolean
+  onToggle: () => void
   onChange: (text: string) => void
+  onDelete: () => void
 }) {
   const [value, setValue] = useState(sketch.text)
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const debouncedOnChange = useCappedDebounce(onChange)
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const val = e.target.value
     setValue(val)
-    if (timer.current) clearTimeout(timer.current)
-    timer.current = setTimeout(() => onChange(val), 300)
+    debouncedOnChange(val)
   }
 
   return (
-    <textarea
-      value={value}
-      onChange={handleChange}
-      placeholder="Write your sketch…"
-      className="flex-1 w-full bg-transparent text-[#c8c8d8] placeholder-[#444] resize-none outline-none text-sm leading-relaxed"
-    />
+    <div className="border border-[#1a1a2e] rounded overflow-hidden">
+      <div className="flex items-center">
+        <button
+          onClick={onToggle}
+          className="flex-1 min-w-0 text-left px-3 py-2 text-sm text-[#888] hover:text-[#c8c8d8] hover:bg-panelHover transition-colors flex items-center justify-between"
+        >
+          <span className="truncate">{title}</span>
+          <span className="text-xs text-[#555] ml-2 shrink-0">{expanded ? '▲' : '▼'}</span>
+        </button>
+        <button
+          onClick={onDelete}
+          className="px-2 py-2 text-[#555] hover:text-red-400 transition-colors shrink-0"
+          title="Delete sketch"
+        >
+          ×
+        </button>
+      </div>
+      {expanded && (
+        <textarea
+          value={value}
+          onChange={handleChange}
+          placeholder="Write your sketch…"
+          rows={8}
+          className="w-full bg-[#0d0d14] text-[#c8c8d8] placeholder-[#444] resize-none outline-none text-sm leading-relaxed p-3 border-t border-[#1a1a2e]"
+        />
+      )}
+    </div>
   )
 }

@@ -1,3 +1,66 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Backgrounds */
+  --color-bg-canvas: #1f1f1f;
+  --color-bg-panel: #181818;
+  --color-bg-panel-select: #333333;
+  --color-bg-panel-hover: #282828;
+}
+
+input,
+textarea {
+  font-family: 'Space Mono', monospace;
+}
+
+textarea {
+  scrollbar-width: auto;
+  scrollbar-color: #424242 transparent;
+}
+
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background-color: #686868;
+}
+
+@layer utilities {
+  .scrollbar {
+    scrollbar-width: auto;
+    scrollbar-color: #424242 transparent;
+  }
+
+  .scrollbar::-webkit-scrollbar {
+    width: 20px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background-color: #424242;
+    border-radius: 0;
+  }
+
+  .scrollbar::-webkit-scrollbar-button:start:decrement,
+  .scrollbar::-webkit-scrollbar-button:end:increment,
+  .scrollbar::-webkit-scrollbar-button:start:increment,
+  .scrollbar::-webkit-scrollbar-button:end:decrement {
+    display: none;
+    height: 0;
+    width: 0;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #686868;
+  }
+}

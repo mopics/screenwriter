@@ -16,3 +16,9 @@ export type Character = {
     relationships: string[],
     expandedFields: string[]
 }
+
+export type CharacterGroup = {
+    id: string
+    name: string
+    characterIds: string[]
+}

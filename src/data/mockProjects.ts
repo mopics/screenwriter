@@ -1,21 +1,21 @@
 import type { Project } from '../types/project'
 
 export const mockProjects: Project[] = [
-  {
-    id: '1',
-    title: 'Never Been Known To Fail',
-    genre: 'FEATURE',
-    draftNumber: 3,
-    lastEditedAt: '2026-05-16T10:00:00Z',
-    createdAt: '2026-03-01T10:00:00Z',
-    characters: [
-      {
-        id: '1',
-        name: 'Mogyo (Hungarian for peanut)',
-        pronouns: ['Male', 'Restless', 'Mocking', 'Acting', 'Fast', 'Quick', 'Deceptive', 'Curious', 'Faking'],
-        groups: ['Trine 3 Air', 'Main Character'],
-        otherNames: [`Mercury's Bastard`],
-        personality: `# Mars 3 degrees in Gemini
+        {
+                id: '1',
+                title: 'Never Been Known To Fail',
+                genre: 'FEATURE',
+                draftNumber: 3,
+                lastEditedAt: '2026-05-16T10:00:00Z',
+                createdAt: '2026-03-01T10:00:00Z',
+                characters: [
+                        {
+                                id: '1',
+                                name: 'Mogyo (Hungarian for peanut)',
+                                pronouns: ['Male', 'Restless', 'Mocking', 'Acting', 'Fast', 'Quick', 'Deceptive', 'Curious', 'Faking'],
+                                groups: ['Trine 3 Air', 'Main Character'],
+                                otherNames: [`Mercury's Bastard`],
+                                personality: `# Mars 3 degrees in Gemini
 has a very sharp, quicksilver kind of energy. Captured around year 0 somewhere in the north. Agile mentally, hard to fully dominate, always observing.
 
 # Restless Survivor
@@ -38,8 +38,8 @@ He develops:
 Roman crowds may love him because he taunts elegantly before combat.
 
 He laughs at dangerous moments when others freeze.`,
-        physicalDescription: 'Mogyo is a small, wiry character with sharp features and quick movements.',
-        motivation: `# Wolf-Like Social Intelligence
+                                physicalDescription: 'Mogyo is a small, wiry character with sharp features and quick movements.',
+                                motivation: `# Wolf-Like Social Intelligence
 Not a lone brute.
 Instead:
  * understands group hierarchy instantly
@@ -66,7 +66,7 @@ Crowds love him because every fight feels theatrical.
 * hates silence
 * collects rumors like treasure
 * secretly fears being forgotten more than death`,
-        internalConflict: `# Love/Hate for the Romans
+                                internalConflict: `# Love/Hate for the Romans
 Coming from the north (Germanic, Celtic, or frontier tribal culture), add:
 Distrust of Civilization
 He sees Romans as:
@@ -87,7 +87,7 @@ This inner contradiction bothers him.
 #Sincere self vs Constructed Persona
 
 Over time he may not know which one is real anymore`,
-        strengths: `# Fast Reflexes, Not Heavy Strength
+                                strengths: `# Fast Reflexes, Not Heavy Strength
 He is not necessarily the biggest fighter.
 Instead:
 * quick footwork
@@ -125,7 +125,7 @@ Could:
 * imitate voices from memory
 
 This makes him ideal as an arena performer.`,
-        weaknesses: `Cannot Stop Talking
+                                weaknesses: `Cannot Stop Talking
 Under stress he:
 * jokes too much
 * reveals information accidentally
@@ -159,18 +159,19 @@ That makes masters distrust him.
 * sincere self vs constructed persona
 
 Over time he may not know which one is real anymore.`,
-        characterArc: 'Mogyo learns to balance his cunning with empathy and responsibility.',
-        dialogueStyle: 'Sarcastic and witty, often using humor to deflect serious situations.',
-        backstory: 'Mogyo grew up in a chaotic environment, learning to rely on his wits to survive.',
-        relationships: ['Trine 3 Air', 'Main Character'],
-      },
-      {
-        id: '2',
-        name: 'Hilsu',
-        pronouns: ['Female'],
-        groups: ['Major 2nd 5 in Fire'],
-        otherNames: [],
-        personality: `Neptune 9 degrees in Sagittarius & Moon 4 in Leo.
+                                characterArc: 'Mogyo learns to balance his cunning with empathy and responsibility.',
+                                dialogueStyle: 'Sarcastic and witty, often using humor to deflect serious situations.',
+                                backstory: 'Mogyo grew up in a chaotic environment, learning to rely on his wits to survive.',
+                                relationships: ['Trine 3 Air', 'Main Character'],
+                                expandedFields: []
+                        },
+                        {
+                                id: '2',
+                                name: 'Hilsu',
+                                pronouns: ['Female'],
+                                groups: ['Major 2nd 5 in Fire'],
+                                otherNames: [],
+                                personality: `Neptune 9 degrees in Sagittarius & Moon 4 in Leo.
         # Quiet Visionary
 
 She often seems distracted, because part of her mind is always elsewhere.
@@ -195,8 +196,8 @@ She survives through perception, not authority.
 Most men underestimate her because she rarely speaks loudly.
 
 That is exactly why she survives.`,
-        physicalDescription: 'Hilsu is a young woman with an ethereal presence, often appearing lost in thought.',
-        motivation: `# Compassion for Outsiders
+                                physicalDescription: 'Hilsu is a young woman with an ethereal presence, often appearing lost in thought.',
+                                motivation: `# Compassion for Outsiders
 
 Neptune in Sagittarius is drawn toward:
 * foreigners
@@ -212,7 +213,7 @@ She sees:
 * “a man stolen by fate”
 * “someone the gods refused to let die”
 perhaps even a divine omen tied to her own imprisonment`,
-        internalConflict: `# Public vs Private Self
+                                internalConflict: `# Public vs Private Self
 ## Public:
 *serene
 *disciplined
@@ -235,7 +236,7 @@ The gladiator becomes dangerous because he awakens a third possibility:
 
 That she could become neither sacred nor obedient —
 but free.`,
-        strengths: `# Paranormal & Mystical Traits
+                                strengths: `# Paranormal & Mystical Traits
 Dream-Sensitive
 
 She experiences:
@@ -266,7 +267,7 @@ She gives him:
 * symbolic protection charms
 
 Possibly even arranged victories.`,
-        weaknesses: `# Reads Meaning Into Coincidence
+                                weaknesses: `# Reads Meaning Into Coincidence
 Neptune-Sagittarius minds connect patterns constantly.
 She notices:
 * birds flying in unusual formations
@@ -287,28 +288,29 @@ Possible flaws:
 * mistakes destiny for love
 * believes the gods “will provide”
 * delays practical action waiting for omens`,
-        characterArc: `The gladiator becomes dangerous because he awakens a third possibility:
+                                characterArc: `The gladiator becomes dangerous because he awakens a third possibility:
 That she could become neither sacred nor obedient —
 but free.`,
-        dialogueStyle: 'Vague and poetic, often speaking in riddles or using metaphorical language.',
-        backstory: 'Hilsu was born into a family of temple servants, trained from a young age in religious rituals and prophecy.',
-        relationships: ['Major 2nd 5 in Fire']
-      }
-    ],
-    acts: [],
-    scenes: [],
-    sketches: []
-  },
-  {
-    id: '2',
-    title: 'Homecoming',
-    genre: 'SHORT',
-    draftNumber: 1,
-    lastEditedAt: '2026-05-11T10:00:00Z',
-    createdAt: '2026-04-15T10:00:00Z',
-    characters: [],
-    acts: [],
-    scenes: [],
-    sketches: []
-  },
+                                dialogueStyle: 'Vague and poetic, often speaking in riddles or using metaphorical language.',
+                                backstory: 'Hilsu was born into a family of temple servants, trained from a young age in religious rituals and prophecy.',
+                                relationships: ['Major 2nd 5 in Fire'],
+                                expandedFields: []
+                        }
+                ],
+                acts: [],
+                scenes: [],
+                sketches: []
+        },
+        {
+                id: '2',
+                title: 'Homecoming',
+                genre: 'SHORT',
+                draftNumber: 1,
+                lastEditedAt: '2026-05-11T10:00:00Z',
+                createdAt: '2026-04-15T10:00:00Z',
+                characters: [],
+                acts: [],
+                scenes: [],
+                sketches: []
+        },
 ]

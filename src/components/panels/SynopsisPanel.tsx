@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import type { Project } from '../../types/project'
+import { useCappedDebounce } from '../../hooks/useCappedDebounce'
 
 type Props = {
   project: Project
@@ -8,17 +9,16 @@ type Props = {
 
 export function SynopsisPanel({ project, onUpdate }: Props) {
   const [value, setValue] = useState(project.synopsis ?? '')
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const debouncedSave = useCappedDebounce((v: string) => onUpdate({ synopsis: v }))
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const val = e.target.value
     setValue(val)
-    if (timer.current) clearTimeout(timer.current)
-    timer.current = setTimeout(() => onUpdate({ synopsis: val }), 300)
+    debouncedSave(val)
   }
 
   return (
-    <div className="flex-1 p-6 flex flex-col">
+    <div className="flex-1 p-6 flex flex-col scrollbar">
       <textarea
         value={value}
         onChange={handleChange}

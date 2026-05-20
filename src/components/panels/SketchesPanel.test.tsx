@@ -32,39 +32,36 @@ describe('SketchesPanel', () => {
     expect(screen.getByText('Untitled sketch')).toBeDefined()
   })
 
-  it('calls onSelectId when a sketch is clicked', () => {
-    const onSelectId = vi.fn()
-    render(<SketchesPanel project={baseProject} onUpdate={() => {}} selectedId={null} onSelectId={onSelectId} />)
+  it('clicking a card expands and shows its textarea', () => {
+    render(<SketchesPanel project={baseProject} onUpdate={() => {}} selectedId={null} onSelectId={() => {}} />)
+    expect(screen.queryByPlaceholderText('Write your sketch…')).toBeNull()
     fireEvent.click(screen.getByText('First line of sketch'))
-    expect(onSelectId).toHaveBeenCalledWith('sk1')
-  })
-
-  it('shows textarea with sketch text when sketch is selected', () => {
-    render(<SketchesPanel project={baseProject} onUpdate={() => {}} selectedId="sk1" onSelectId={() => {}} />)
     const ta = screen.getByPlaceholderText('Write your sketch…') as HTMLTextAreaElement
     expect(ta.value).toBe('First line of sketch\nSecond line')
   })
 
-  it('shows placeholder when no sketch is selected', () => {
+  it('clicking an expanded card collapses it', () => {
     render(<SketchesPanel project={baseProject} onUpdate={() => {}} selectedId={null} onSelectId={() => {}} />)
-    expect(screen.getByText('Select a sketch to edit')).toBeDefined()
+    fireEvent.click(screen.getByText('First line of sketch'))
+    expect(screen.getByPlaceholderText('Write your sketch…')).toBeDefined()
+    fireEvent.click(screen.getByText('First line of sketch'))
+    expect(screen.queryByPlaceholderText('Write your sketch…')).toBeNull()
   })
 
-  it('calls onUpdate and onSelectId when New Sketch is clicked', () => {
+  it('calls onUpdate when New Sketch is clicked', () => {
     const onUpdate = vi.fn()
-    const onSelectId = vi.fn()
-    render(<SketchesPanel project={baseProject} onUpdate={onUpdate} selectedId={null} onSelectId={onSelectId} />)
+    render(<SketchesPanel project={baseProject} onUpdate={onUpdate} selectedId={null} onSelectId={() => {}} />)
     fireEvent.click(screen.getByText('+ New Sketch'))
     const patch = onUpdate.mock.calls[0][0]
     expect(patch.sketches).toHaveLength(3)
     expect(patch.sketches[2].text).toBe('')
-    expect(onSelectId).toHaveBeenCalledWith(patch.sketches[2].id)
   })
 
   it('debounces onUpdate by 300ms on text change', () => {
     vi.useFakeTimers()
     const onUpdate = vi.fn()
-    render(<SketchesPanel project={baseProject} onUpdate={onUpdate} selectedId="sk1" onSelectId={() => {}} />)
+    render(<SketchesPanel project={baseProject} onUpdate={onUpdate} selectedId={null} onSelectId={() => {}} />)
+    fireEvent.click(screen.getByText('First line of sketch'))
     const ta = screen.getByPlaceholderText('Write your sketch…')
     fireEvent.change(ta, { target: { value: 'New text' } })
     expect(onUpdate).not.toHaveBeenCalled()
