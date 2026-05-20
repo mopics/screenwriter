@@ -51,8 +51,8 @@ export function SceneEditor() {
   const panelProps = { project, onUpdate, selectedId, onSelectId: setSelectedId }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex flex-col">
-      <header className="h-10 bg-[#08080f] border-b border-[#1a1a2e] flex items-center px-4 gap-4 shrink-0">
+    <div className="h-screen overflow-hidden bg-panel flex flex-col">
+      <header className="h-10 bg-panel border-b border-[#1a1a2e] flex items-center px-4 gap-4 shrink-0">
         <Link to="/" className="text-[#555] text-sm hover:text-[#888] transition-colors">←</Link>
         <span className="text-[#c9a227] text-xs font-bold tracking-widest">SCREENWRITER</span>
         <span className="text-[#555] text-sm">{project.title}</span>
@@ -63,7 +63,7 @@ export function SceneEditor() {
         {activeSection === 'characters' && <CharactersPanel {...panelProps} />}
         {activeSection === 'acts' && <ActsPanel {...panelProps} />}
         {activeSection === 'scenes' && <ScenesPanel {...panelProps} />}
-        {activeSection === 'sketches' && <SketchesPanel {...panelProps} />}
+        <SketchesPanel {...panelProps} />
       </div>
     </div>
   )
