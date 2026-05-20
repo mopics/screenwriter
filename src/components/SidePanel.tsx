@@ -1,13 +1,14 @@
-export type SectionKey = 'synopsis' | 'characters' | 'acts' | 'scenes' | 'sketches'
+import { useResize } from '../hooks/useResize'
+
+export type SectionKey = 'synopsis' | 'characters' | 'acts' | 'scenes'
 
 type SectionItem = { key: SectionKey; icon: string; label: string }
 
 const SECTIONS: SectionItem[] = [
   { key: 'synopsis', icon: '📋', label: 'Synopsis' },
-  { key: 'characters', icon: '👤', label: 'Characters' },
-  { key: 'acts', icon: '🎭', label: 'Acts' },
+  { key: 'characters', icon: '🎭', label: 'Characters' },
+  { key: 'acts', icon: '🗂️', label: 'Acts' },
   { key: 'scenes', icon: '🎬', label: 'Scenes' },
-  { key: 'sketches', icon: '✏️', label: 'Sketches' },
 ]
 
 type Props = {
@@ -16,8 +17,10 @@ type Props = {
 }
 
 export function SidePanel({ activeSection, onSectionChange }: Props) {
+  const { width, dragHandleProps } = useResize(80, 48, 240)
+
   return (
-    <nav className="w-12 flex flex-col bg-[#0d0d18] border-r border-[#1a1a2e]">
+    <nav className="relative flex flex-col shrink-0 bg-panel border-r border-[#1a1a2e]" style={{ width }}>
       {SECTIONS.map(({ key, icon, label }) => {
         const isActive = key === activeSection
         return (
@@ -25,16 +28,16 @@ export function SidePanel({ activeSection, onSectionChange }: Props) {
             key={key}
             title={label}
             onClick={() => onSectionChange(key)}
-            className={`flex items-center justify-center h-12 w-full text-lg border-l-2 transition-colors ${
-              isActive
-                ? 'border-l-[#c9a227] bg-[#14141f] text-[#c9a227]'
-                : 'border-l-transparent text-[#555] hover:text-[#888] hover:bg-[#0f0f1a]'
-            }`}
+            className={`flex items-center justify-center h-14 w-full text-xl border-l-2 transition-colors ${isActive
+              ? 'border-l-[#c9a227] bg-panelSelect text-[#c9a227]'
+              : 'border-l-transparent text-[#555] hover:text-[#888] hover:bg-panelHover'
+              }`}
           >
             {icon}
           </button>
         )
       })}
+      <div {...dragHandleProps} />
     </nav>
   )
 }
