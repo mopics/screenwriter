@@ -86,9 +86,8 @@ describe('SceneEditor', () => {
     expect(screen.getByText('Select a scene to edit')).toBeDefined()
   })
 
-  it('switches to SketchesPanel when Sketches icon is clicked', () => {
+  it('renders SketchesPanel permanently on the right', () => {
     renderWithRouter('1')
-    fireEvent.click(screen.getByTitle('Sketches'))
     expect(screen.getByText('Select a sketch to edit')).toBeDefined()
   })
 

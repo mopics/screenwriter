@@ -3,13 +3,12 @@ import { describe, it, expect, vi } from 'vitest'
 import { SidePanel } from './SidePanel'
 
 describe('SidePanel', () => {
-  it('renders buttons for all 5 sections with title attributes', () => {
+  it('renders buttons for all 4 sections with title attributes', () => {
     render(<SidePanel activeSection="synopsis" onSectionChange={() => {}} />)
     expect(screen.getByTitle('Synopsis')).toBeDefined()
     expect(screen.getByTitle('Characters')).toBeDefined()
     expect(screen.getByTitle('Acts')).toBeDefined()
     expect(screen.getByTitle('Scenes')).toBeDefined()
-    expect(screen.getByTitle('Sketches')).toBeDefined()
   })
 
   it('calls onSectionChange with the correct key when a button is clicked', () => {
