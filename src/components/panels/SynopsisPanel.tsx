@@ -20,10 +20,11 @@ export function SynopsisPanel({ project, onUpdate }: Props) {
   return (
     <div className="flex-1 p-6 flex flex-col scrollbar">
       <textarea
+        spellCheck="false"
         value={value}
         onChange={handleChange}
         placeholder="Write your synopsis…"
-        className="flex-1 w-full bg-transparent text-[#c8c8d8] placeholder-[#444] resize-none outline-none text-sm leading-relaxed"
+        className="flex-1 w-full bg-transparent text-textInput placeholder-[#444] resize-none outline-none text-xl leading-relaxed"
       />
     </div>
   )

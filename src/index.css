@@ -8,11 +8,16 @@
   --color-bg-panel: #181818;
   --color-bg-panel-select: #333333;
   --color-bg-panel-hover: #282828;
+  --color-text-input: #c8c8c8;
+  --color-bg-input-focus: #282828;
+  --color-bg-input-hover: #333333;
+  --font-text-input: 'Courier New';
 }
 
 input,
 textarea {
-  font-family: 'Space Mono', monospace;
+  font-family: var(--font-text-input), monospace;
+  color: var(--color-text-input);
 }
 
 textarea {

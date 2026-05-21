@@ -8,6 +8,12 @@ export default {
         panel: 'var(--color-bg-panel)',
         panelHover: 'var(--color-bg-panel-hover)',
         panelSelect: 'var(--color-bg-panel-select)',
+        textInput: 'var(--color-text-input)',
+        bgInputFocus: 'var(--color-bg-input-focus)',
+        bgInputHover: 'var(--color-bg-input-edit-hover)',
+      },
+      fontFamily: {
+        textInput: 'var(--font-text-input), monospace',
       },
     },
   },
