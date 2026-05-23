@@ -25,5 +25,5 @@ export function AutoTextarea({ value, style, ...props }: React.TextareaHTMLAttri
     return () => observer.disconnect()
   }, [])
 
-  return <textarea ref={ref} value={value} style={{ ...style, overflow: 'hidden' }} rows={1} {...props} />
+  return <textarea spellCheck="false" ref={ref} value={value} style={{ ...style, overflow: 'hidden' }} rows={1} {...props} />
 }

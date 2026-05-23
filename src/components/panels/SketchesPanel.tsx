@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { Project } from '../../types/project'
 import type { Sketch } from '../../types/sketch'
 import { useCappedDebounce } from '../../hooks/useCappedDebounce'
+import { AutoTextarea } from '../AutoTextarea'
+import { SearchToolbar } from './SearchToolbar'
 
 type Props = {
   project: Project
@@ -12,6 +14,7 @@ type Props = {
 
 export function SketchesPanel({ project, onUpdate }: Props) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+  const [searchQuery, setSearchQuery] = useState('')
 
   function toggleExpanded(id: string) {
     setExpandedIds(prev => {
@@ -42,10 +45,25 @@ export function SketchesPanel({ project, onUpdate }: Props) {
     return firstLine.substring(0, 40) || 'Untitled sketch'
   }
 
+  function collapseAll() {
+    setExpandedIds(new Set())
+  }
+
+  const q = searchQuery.toLowerCase()
+  const visibleSketches = q
+    ? project.sketches.filter(s => s.text.toLowerCase().includes(q))
+    : project.sketches
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
-        {project.sketches.map(sketch => (
+      <SearchToolbar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        hasExpanded={expandedIds.size > 0}
+        onCollapseAll={collapseAll}
+      />
+      <div className="flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-2 scrollbar">
+        {visibleSketches.map(sketch => (
           <SketchCard
             key={sketch.id}
             sketch={sketch}
@@ -92,7 +110,7 @@ function SketchCard({
   }
 
   return (
-    <div className="border border-[#1a1a2e] rounded overflow-hidden">
+    <div className="shrink-0 border border-[#1a1a2e] rounded overflow-hidden">
       <div className="flex items-center">
         <button
           onClick={onToggle}
@@ -110,12 +128,12 @@ function SketchCard({
         </button>
       </div>
       {expanded && (
-        <textarea
+        <AutoTextarea
           value={value}
           onChange={handleChange}
           placeholder="Write your sketch…"
-          rows={8}
-          className="w-full bg-[#0d0d14] text-[#c8c8d8] placeholder-[#444] resize-none outline-none text-sm leading-relaxed p-3 border-t border-[#1a1a2e]"
+          style={{ resize: 'none' }}
+          className="w-full bg-[#0d0d14] text-[#c8c8d8] placeholder-[#444] outline-none text-sm leading-relaxed p-3 border-t border-[#1a1a2e]"
         />
       )}
     </div>

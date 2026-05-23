@@ -19,7 +19,7 @@ type Props = {
 }
 
 export function RightPanel({ project, onUpdate, selectedId, onSelectId }: Props) {
-  const { width, dragHandleProps } = useResize(360, 200, 600, 'left', 200)
+  const { width, dragHandleProps } = useResize(360, 200, 1300, 'left', 200)
   const [activeTab, setActiveTab] = useState<Tab>('sketches')
 
   return (
@@ -34,8 +34,8 @@ export function RightPanel({ project, onUpdate, selectedId, onSelectId }: Props)
             key={key}
             onClick={() => setActiveTab(key)}
             className={`px-4 py-2 text-xs tracking-wide transition-colors border-b-2 -mb-px ${activeTab === key
-                ? 'border-b-[#c9a227] text-[#c9a227]'
-                : 'border-b-transparent text-[#555] hover:text-[#888]'
+              ? 'border-b-[#c9a227] text-[#c9a227]'
+              : 'border-b-transparent text-[#555] hover:text-[#888]'
               }`}
           >
             {label}
