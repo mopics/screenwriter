@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { AutoTextarea } from '../AutoTextarea'
 import type { Character } from '../../types/character'
 import type { Project } from '../../types/project'
+import { fontSizeMap, type FontSize } from '../../types/settings'
 import { useResize } from '../../hooks/useResize'
 import { useCappedDebounce } from '../../hooks/useCappedDebounce'
 
@@ -9,9 +11,10 @@ type Props = {
   onUpdate: (patch: Partial<Project>) => void
   selectedId: string | null
   onSelectId: (id: string | null) => void
+  fontSize: FontSize
 }
 
-export function CharactersPanel({ project, onUpdate, selectedId, onSelectId }: Props) {
+export function CharactersPanel({ project, onUpdate, selectedId, onSelectId, fontSize }: Props) {
   const { width, dragHandleProps } = useResize(208)
   const selectedChar = project.characters.find(c => c.id === selectedId) ?? null
 
@@ -80,6 +83,7 @@ export function CharactersPanel({ project, onUpdate, selectedId, onSelectId }: P
             character={selectedChar}
             onChange={updateChar}
             onDelete={() => deleteChar(selectedChar.id)}
+            fontSize={fontSize}
           />
         ) : (
           <p className="text-[#555] text-sm">Select a character to edit</p>
@@ -93,9 +97,11 @@ type EditorProps = {
   character: Character
   onChange: (c: Character) => void
   onDelete: () => void
+  fontSize: FontSize
 }
 
-function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
+function CharacterEditor({ character, onChange, onDelete, fontSize }: EditorProps) {
+  const fs = fontSizeMap[fontSize]
   const [local, setLocal] = useState(character)
   const debouncedOnChange = useCappedDebounce(onChange)
 
@@ -157,7 +163,7 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
                   onClick={() => toggleField(key as string)}
                   className="flex items-center gap-1.5 w-full text-left text-xs text-[#888] mb-1 uppercase tracking-wider hover:text-[#aaa] transition-colors"
                 >
-                  <span className="text-[8px]">{isExpanded ? '▼' : '▶'}</span>
+                  <span className="text-[8px]">{isExpanded ? '/' : '>'}</span>
                   {label}
                 </button>
               ) : (
@@ -167,19 +173,20 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
                 <input
                   value={local[key] as string}
                   onChange={e => update(key, e.target.value)}
-                  className="w-full bg-[#0f0f0f] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#ccc] outline-none focus:border-[#c9a227]/50"
+                  style={{ fontSize: fs }}
+                  className="w-full bg-transparent px-3 py-2 text-textInput outline-none hover:bg-bgInputHover focus:bg-bgInputFocus transition-colors"
                 />
               )}
               {type === 'textarea' && isExpanded && (
-                <textarea
+                <AutoTextarea
                   value={local[key] as string}
-                  onChange={e => update(key, e.target.value)}
-                  rows={4}
-                  className="w-full bg-[#0f0f0f] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#ccc] outline-none focus:border-[#c9a227]/50 resize-y"
+                  onChange={e => update(key, (e.target as HTMLTextAreaElement).value)}
+                  style={{ fontSize: fs }}
+                  className="w-full bg-transparent px-3 py-2 text-textInput outline-none hover:bg-bgInputHover focus:bg-bgInputFocus transition-colors"
                 />
               )}
               {type === 'textarea' && !isExpanded && (
-                <div className="text-xs text-[#555] italic px-1 py-0.5 truncate">
+                <div style={{ fontSize: fs }} className="text-[#555] italic px-1 py-0.5 truncate">
                   {(local[key] as string) || '— empty —'}
                 </div>
               )}
@@ -187,7 +194,8 @@ function CharacterEditor({ character, onChange, onDelete }: EditorProps) {
                 <input
                   value={(local[key] as string[]).join(', ')}
                   onChange={e => updateCsv(key, e.target.value)}
-                  className="w-full bg-[#0f0f0f] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
+                  style={{ fontSize: fs }}
+                  className="w-full bg-transparent px-3 py-2 text-textInput outline-none hover:bg-bgInputHover focus:bg-bgInputFocus transition-colors"
                 />
               )}
             </div>

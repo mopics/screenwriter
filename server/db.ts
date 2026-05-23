@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3'
 import { join } from 'path'
+import { migrations } from './migrations'
 
 const dbPath = join(process.cwd(), 'db.sqlite')
 
@@ -13,19 +14,6 @@ db.exec(`
   )
 `)
 
-// Backfill expandedFields on characters that predate the field
-const _rows = db.prepare('SELECT id, data FROM projects').all() as Array<{ id: string; data: string }>
-for (const row of _rows) {
-  const project = JSON.parse(row.data)
-  let changed = false
-  for (const char of project.characters ?? []) {
-    if (!Array.isArray(char.expandedFields)) {
-      char.expandedFields = []
-      changed = true
-    }
-  }
-  if (changed) {
-    db.prepare('UPDATE projects SET data = ?, updated_at = ? WHERE id = ?')
-      .run(JSON.stringify(project), new Date().toISOString(), row.id)
-  }
+for (const migration of migrations) {
+  migration.run(db)
 }

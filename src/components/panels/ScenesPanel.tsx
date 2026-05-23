@@ -1,18 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import { AutoTextarea } from '../AutoTextarea'
 import type { Project } from '../../types/project'
 import type { Scene, SceneBlock } from '../../types/scene'
 import { useResize } from '../../hooks/useResize'
 import { useCappedDebounce } from '../../hooks/useCappedDebounce'
-import { printScene } from '../../utils/printScene'
+import { fontSizeMap, type FontSize } from '../../types/settings'
 
 type Props = {
   project: Project
   onUpdate: (patch: Partial<Project>) => void
   selectedId: string | null
   onSelectId: (id: string | null) => void
+  fontSize: FontSize
 }
 
-export function ScenesPanel({ project, onUpdate, selectedId, onSelectId }: Props) {
+export function ScenesPanel({ project, onUpdate, selectedId, onSelectId, fontSize }: Props) {
   const { width, dragHandleProps } = useResize(208)
   const sortedActs = [...project.acts].sort((a, b) => a.order - b.order)
   const selectedScene = project.scenes.find(s => s.id === selectedId) ?? null
@@ -100,7 +102,7 @@ export function ScenesPanel({ project, onUpdate, selectedId, onSelectId }: Props
       </div>
       <div className="flex-1 overflow-y-auto p-6 scrollbar">
         {selectedScene ? (
-          <SceneBlockEditor key={selectedScene.id} scene={selectedScene} onChange={updateScene} />
+          <SceneBlockEditor key={selectedScene.id} scene={selectedScene} onChange={updateScene} fontSize={fontSize} />
         ) : (
           <p className="text-[#555] text-sm">Select a scene to edit</p>
         )}
@@ -109,40 +111,9 @@ export function ScenesPanel({ project, onUpdate, selectedId, onSelectId }: Props
   )
 }
 
-const fontSizeMap = { sm: '12px', lg: '16px', xl: '20px', '2xl': '24px' } as const
-type FontSize = keyof typeof fontSizeMap
 
-function AutoTextarea({ value, style, ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  const ref = useRef<HTMLTextAreaElement>(null)
-  const prevWidth = useRef<number>(0)
-
-  function resize() {
-    if (!ref.current) return
-    ref.current.style.height = 'auto'
-    ref.current.style.height = ref.current.scrollHeight + 'px'
-  }
-
-  useEffect(() => { resize() }, [value, style?.fontSize]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (!ref.current) return
-    const observer = new ResizeObserver(entries => {
-      const width = entries[0]?.contentRect.width ?? 0
-      if (width !== prevWidth.current) {
-        prevWidth.current = width
-        resize()
-      }
-    })
-    observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
-
-  return <textarea ref={ref} value={value} style={{ ...style, overflow: 'hidden' }} rows={1} {...props} />
-}
-
-function SceneBlockEditor({ scene, onChange }: { scene: Scene; onChange: (s: Scene) => void }) {
+function SceneBlockEditor({ scene, onChange, fontSize }: { scene: Scene; onChange: (s: Scene) => void; fontSize: FontSize }) {
   const [local, setLocal] = useState(scene)
-  const [fontSize, setFontSize] = useState<FontSize>('sm')
   const [collapsed, setCollapsed] = useState<Set<number>>(new Set())
   const debouncedOnChange = useCappedDebounce(onChange)
   const fs = fontSizeMap[fontSize]
@@ -192,22 +163,6 @@ function SceneBlockEditor({ scene, onChange }: { scene: Scene; onChange: (s: Sce
           style={{ fontSize: fs }}
           className="flex-1 bg-transparent font-['Courier_New'] text-textInput uppercase tracking-wider outline-none placeholder-[#333] hover:bg-bgInputHover focus:bg-bgInputFocus transition-colors"
         />
-        <select
-          value={fontSize}
-          onChange={e => setFontSize(e.target.value as FontSize)}
-          className="bg-transparent text-xs text-[#555] outline-none cursor-pointer hover:text-[#c9a227] transition-colors"
-        >
-          {(Object.keys(fontSizeMap) as FontSize[]).map(s => (
-            <option key={s} value={s} className="bg-[#0a0a14]">{s}</option>
-          ))}
-        </select>
-        <button
-          onClick={() => printScene(local)}
-          className="shrink-0 text-xs text-[#555] hover:text-[#c9a227] transition-colors tracking-widest pb-0.5"
-          title="Open print preview"
-        >
-          PRINT
-        </button>
       </div>
       <div className="space-y-4">
         {local.blocks.map((block, idx) => {
@@ -221,7 +176,7 @@ function SceneBlockEditor({ scene, onChange }: { scene: Scene; onChange: (s: Sce
                 onClick={() => toggleCollapse(idx)}
                 className="absolute top-1 left-1 text-[10px] text-[#444] opacity-0 group-hover:opacity-100 hover:text-[#888] transition-all leading-none"
               >
-                {isCollapsed ? '▶' : '▼'}
+                {isCollapsed ? '>' : '/'}
               </button>
               {isCollapsed ? (
                 <p

@@ -1,6 +1,5 @@
 import { useResize } from '../hooks/useResize'
-
-export type SectionKey = 'synopsis' | 'characters' | 'acts' | 'scenes'
+import type { SectionKey } from '../types/settings';
 
 type SectionItem = { key: SectionKey; icon: string; label: string }
 

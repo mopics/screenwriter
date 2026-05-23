@@ -99,7 +99,7 @@ function SketchCard({
           className="flex-1 min-w-0 text-left px-3 py-2 text-sm text-[#888] hover:text-[#c8c8d8] hover:bg-panelHover transition-colors flex items-center justify-between"
         >
           <span className="truncate">{title}</span>
-          <span className="text-xs text-[#555] ml-2 shrink-0">{expanded ? '▲' : '▼'}</span>
+          <span className="text-xs text-[#555] ml-2 shrink-0">{expanded ? '/' : '>'}</span>
         </button>
         <button
           onClick={onDelete}

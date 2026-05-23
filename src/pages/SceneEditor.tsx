@@ -1,13 +1,14 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useProjects } from '../hooks/useProjects'
 import { SidePanel } from '../components/SidePanel'
-import type { SectionKey } from '../components/SidePanel'
+import { fontSizeMap, type SectionKey, type FontSize, type FontSizeSettings } from '../types/settings'
 import { SynopsisPanel } from '../components/panels/SynopsisPanel'
 import { CharactersPanel } from '../components/panels/CharactersPanel'
 import { ActsPanel } from '../components/panels/ActsPanel'
 import { ScenesPanel } from '../components/panels/ScenesPanel'
 import { RightPanel } from '../components/RightPanel'
+import { printScene } from '../utils/printScene'
 import type { Project } from '../types/project'
 
 export function SceneEditor() {
@@ -15,6 +16,12 @@ export function SceneEditor() {
   const { projects, loading, updateProject } = useProjects()
   const [activeSection, setActiveSection] = useState<SectionKey>('synopsis')
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [fontSizes, setFontSizes] = useState<FontSizeSettings>({ scenes: 'sm', synopsis: 'sm', characters: 'sm', acts: 'sm' })
+
+  useEffect(() => {
+    const p = projects.find(p => p.id === id)
+    if (p?.settings?.fontSizes?.scenes) setFontSizes(p.settings.fontSizes)
+  }, [id, loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
@@ -48,6 +55,13 @@ export function SceneEditor() {
     setSelectedId(null)
   }
 
+  function handleFontSizeChange(s: FontSize) {
+    // Set activeSections font size
+    setFontSizes(prev => ({ ...prev, [activeSection]: s }))
+    onUpdate({ settings: { ...project!.settings, fontSizes: { ...project!.settings.fontSizes, [activeSection]: s } } })
+  }
+
+  const selectedScene = project.scenes.find(s => s.id === selectedId)
   const panelProps = { project, onUpdate, selectedId, onSelectId: setSelectedId }
 
   return (
@@ -56,13 +70,32 @@ export function SceneEditor() {
         <Link to="/" className="text-[#555] text-sm hover:text-[#888] transition-colors">←</Link>
         <span className="text-[#c9a227] text-xs font-bold tracking-widest">SCREENWRITER</span>
         <span className="text-[#555] text-sm">{project.title}</span>
+        <div className="ml-auto flex items-center gap-4">
+          <select
+            value={fontSizes[activeSection]}
+            onChange={e => handleFontSizeChange(e.target.value as FontSize)}
+            className="bg-transparent text-xs text-[#555] outline-none cursor-pointer hover:text-[#c9a227] transition-colors"
+          >
+            {(Object.keys(fontSizeMap) as FontSize[]).map(s => (
+              <option key={s} value={s} className="bg-[#0a0a14]">{s}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => selectedScene && printScene(selectedScene)}
+            disabled={!selectedScene}
+            className="text-xs tracking-widest transition-colors disabled:opacity-30 disabled:cursor-default text-[#555] hover:enabled:text-[#c9a227]"
+            title="Open print preview"
+          >
+            PRINT
+          </button>
+        </div>
       </header>
       <div className="flex flex-1 overflow-hidden">
         <SidePanel activeSection={activeSection} onSectionChange={handleSectionChange} />
-        {activeSection === 'synopsis' && <SynopsisPanel project={project} onUpdate={onUpdate} />}
-        {activeSection === 'characters' && <CharactersPanel {...panelProps} />}
+        {activeSection === 'synopsis' && <SynopsisPanel project={project} onUpdate={onUpdate} fontSize={fontSizes.synopsis} />}
+        {activeSection === 'characters' && <CharactersPanel {...panelProps} fontSize={fontSizes.characters} />}
         {activeSection === 'acts' && <ActsPanel {...panelProps} />}
-        {activeSection === 'scenes' && <ScenesPanel {...panelProps} />}
+        {activeSection === 'scenes' && <ScenesPanel {...panelProps} fontSize={fontSizes.scenes} />}
         <RightPanel {...panelProps} />
       </div>
     </div>

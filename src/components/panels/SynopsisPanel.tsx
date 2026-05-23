@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import type { Project } from '../../types/project'
 import { useCappedDebounce } from '../../hooks/useCappedDebounce'
+import { fontSizeMap, type FontSize } from '../../types/settings'
 
 type Props = {
   project: Project
   onUpdate: (patch: Partial<Project>) => void
+  fontSize: FontSize
 }
 
-export function SynopsisPanel({ project, onUpdate }: Props) {
+export function SynopsisPanel({ project, onUpdate, fontSize }: Props) {
   const [value, setValue] = useState(project.synopsis ?? '')
   const debouncedSave = useCappedDebounce((v: string) => onUpdate({ synopsis: v }))
 
@@ -24,7 +26,8 @@ export function SynopsisPanel({ project, onUpdate }: Props) {
         value={value}
         onChange={handleChange}
         placeholder="Write your synopsis…"
-        className="flex-1 w-full bg-transparent text-textInput placeholder-[#444] resize-none outline-none text-xl leading-relaxed"
+        style={{ fontSize: fontSizeMap[fontSize] }}
+        className="flex-1 w-full bg-transparent text-textInput placeholder-[#444] resize-none outline-none leading-relaxed"
       />
     </div>
   )
