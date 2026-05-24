@@ -1,0 +1,136 @@
+<h2>CharacterRelationsPanel — full layout</h2>
+<p class="subtitle">Lower triangle matrix. Click a filled cell to edit, click an empty active cell to create. Does this look right?</p>
+
+<div class="mockup">
+  <div class="mockup-header">CharacterRelationsPanel — inside SceneEditor</div>
+  <div class="mockup-body" style="background:#0a0a14;padding:24px;overflow:auto">
+
+    <!-- Panel header -->
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px">
+      <span style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.12em;font-family:monospace">Character Relations</span>
+      <span style="font-size:9px;color:#333;font-family:monospace">5 characters · 7 relationships defined</span>
+    </div>
+
+    <!-- Matrix -->
+    <div style="display:inline-grid;grid-template-columns:80px repeat(5,100px);gap:3px;font-family:monospace">
+
+      <!-- Header row -->
+      <div></div>
+      <div style="font-size:9px;color:#666;text-align:center;padding:4px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid #1a1a2e">ANNA</div>
+      <div style="font-size:9px;color:#666;text-align:center;padding:4px 2px;border-bottom:1px solid #1a1a2e">JAKE</div>
+      <div style="font-size:9px;color:#666;text-align:center;padding:4px 2px;border-bottom:1px solid #1a1a2e">MARIE</div>
+      <div style="font-size:9px;color:#666;text-align:center;padding:4px 2px;border-bottom:1px solid #1a1a2e">SAM</div>
+      <div style="font-size:9px;color:#666;text-align:center;padding:4px 2px;border-bottom:1px solid #1a1a2e">VICTOR</div>
+
+      <!-- Row: ANNA -->
+      <div style="font-size:9px;color:#666;padding:4px 8px 4px 0;text-align:right;align-self:center;border-right:1px solid #1a1a2e">ANNA</div>
+      <!-- diagonal -->
+      <div style="background:#0d0d1a;height:56px;display:flex;align-items:center;justify-content:center">
+        <span style="color:#222;font-size:14px">×</span>
+      </div>
+      <!-- upper triangle - locked -->
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+
+      <!-- Row: JAKE -->
+      <div style="font-size:9px;color:#666;padding:4px 8px 4px 0;text-align:right;align-self:center;border-right:1px solid #1a1a2e">JAKE</div>
+      <!-- JAKE × ANNA — filled -->
+      <div style="background:#13131f;height:56px;padding:7px 8px;cursor:pointer;border:1px solid #1e1e30;transition:border-color .15s" onmouseover="this.style.borderColor='#c9a22760'" onmouseout="this.style.borderColor='#1e1e30'">
+        <div style="font-size:9px;color:#c9a227;margin-bottom:3px;font-weight:500">rivals</div>
+        <div style="font-size:8px;color:#555;line-height:1.4;overflow:hidden;max-height:30px">competing for the director's attention, deep mutual respect underneath</div>
+      </div>
+      <!-- diagonal -->
+      <div style="background:#0d0d1a;height:56px;display:flex;align-items:center;justify-content:center">
+        <span style="color:#222;font-size:14px">×</span>
+      </div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+
+      <!-- Row: MARIE -->
+      <div style="font-size:9px;color:#666;padding:4px 8px 4px 0;text-align:right;align-self:center;border-right:1px solid #1a1a2e">MARIE</div>
+      <!-- MARIE × ANNA — filled -->
+      <div style="background:#13131f;height:56px;padding:7px 8px;cursor:pointer;border:1px solid #1e1e30" onmouseover="this.style.borderColor='#c9a22760'" onmouseout="this.style.borderColor='#1e1e30'">
+        <div style="font-size:9px;color:#7b68ee;margin-bottom:3px;font-weight:500">mentor</div>
+        <div style="font-size:8px;color:#555;line-height:1.4;overflow:hidden;max-height:30px">Anna shaped Marie's entire worldview before the falling out</div>
+      </div>
+      <!-- MARIE × JAKE — filled, SELECTED (popover open) -->
+      <div style="background:#13131f;height:56px;padding:7px 8px;cursor:pointer;border:1px solid #c9a227;position:relative">
+        <div style="font-size:9px;color:#e74c3c;margin-bottom:3px;font-weight:500">lovers</div>
+        <div style="font-size:8px;color:#555;line-height:1.4;overflow:hidden;max-height:30px">secret affair, neither one ready to commit</div>
+        <!-- Popover -->
+        <div style="position:absolute;top:60px;left:0;background:#13131f;border:1px solid #c9a227;border-radius:4px;padding:12px;width:200px;box-shadow:0 8px 32px rgba(0,0,0,.8);z-index:20">
+          <div style="font-size:8px;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:.1em">MARIE ↔ JAKE</div>
+          <div style="font-size:8px;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em">Type</div>
+          <input readonly value="lovers" style="width:100%;background:#1a1a2e;border:1px solid #2a2a40;color:#e74c3c;font-size:10px;padding:5px 7px;margin-bottom:8px;border-radius:2px;box-sizing:border-box;font-family:monospace" />
+          <div style="font-size:8px;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em">Description</div>
+          <textarea readonly rows="3" style="width:100%;background:#1a1a2e;border:1px solid #2a2a40;color:#888;font-size:10px;padding:5px 7px;margin-bottom:10px;border-radius:2px;box-sizing:border-box;resize:none;font-family:monospace">secret affair, neither one ready to commit</textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <button style="font-size:8px;color:#e74c3c;background:none;border:none;cursor:pointer;padding:0;font-family:monospace">delete</button>
+            <div style="display:flex;gap:6px">
+              <button style="font-size:8px;color:#555;background:none;border:1px solid #2a2a40;border-radius:2px;padding:4px 8px;cursor:pointer;font-family:monospace">cancel</button>
+              <button style="font-size:8px;color:#c9a227;background:none;border:1px solid #c9a22760;border-radius:2px;padding:4px 8px;cursor:pointer;font-family:monospace">save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- diagonal -->
+      <div style="background:#0d0d1a;height:56px;display:flex;align-items:center;justify-content:center">
+        <span style="color:#222;font-size:14px">×</span>
+      </div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+
+      <!-- Row: SAM -->
+      <div style="font-size:9px;color:#666;padding:4px 8px 4px 0;text-align:right;align-self:center;border-right:1px solid #1a1a2e">SAM</div>
+      <!-- SAM × ANNA — empty (clickable) -->
+      <div style="background:#0e0e1a;height:56px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px dashed #1e1e30" onmouseover="this.style.borderColor='#333'" onmouseout="this.style.borderColor='#1e1e30'">
+        <span style="color:#2a2a3a;font-size:16px">+</span>
+      </div>
+      <!-- SAM × JAKE — filled -->
+      <div style="background:#13131f;height:56px;padding:7px 8px;cursor:pointer;border:1px solid #1e1e30" onmouseover="this.style.borderColor='#c9a22760'" onmouseout="this.style.borderColor='#1e1e30'">
+        <div style="font-size:9px;color:#3498db;margin-bottom:3px;font-weight:500">siblings</div>
+        <div style="font-size:8px;color:#555;line-height:1.4;overflow:hidden;max-height:30px">estranged for a decade, reunited by their father's death</div>
+      </div>
+      <!-- SAM × MARIE — empty -->
+      <div style="background:#0e0e1a;height:56px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px dashed #1e1e30" onmouseover="this.style.borderColor='#333'" onmouseout="this.style.borderColor='#1e1e30'">
+        <span style="color:#2a2a3a;font-size:16px">+</span>
+      </div>
+      <!-- diagonal -->
+      <div style="background:#0d0d1a;height:56px;display:flex;align-items:center;justify-content:center">
+        <span style="color:#222;font-size:14px">×</span>
+      </div>
+      <div style="background:#0a0a0f;height:56px;border:1px solid #111"></div>
+
+      <!-- Row: VICTOR -->
+      <div style="font-size:9px;color:#666;padding:4px 8px 4px 0;text-align:right;align-self:center;border-right:1px solid #1a1a2e">VICTOR</div>
+      <div style="background:#0e0e1a;height:56px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px dashed #1e1e30" onmouseover="this.style.borderColor='#333'" onmouseout="this.style.borderColor='#1e1e30'">
+        <span style="color:#2a2a3a;font-size:16px">+</span>
+      </div>
+      <div style="background:#13131f;height:56px;padding:7px 8px;cursor:pointer;border:1px solid #1e1e30" onmouseover="this.style.borderColor='#c9a22760'" onmouseout="this.style.borderColor='#1e1e30'">
+        <div style="font-size:9px;color:#555;margin-bottom:3px;font-weight:500">acquaintances</div>
+        <div style="font-size:8px;color:#444;line-height:1.4;overflow:hidden;max-height:30px">met once at a party, Victor doesn't remember him</div>
+      </div>
+      <div style="background:#0e0e1a;height:56px;cursor:pointer;display:flex;align-items:center;justify-content:center;border:1px dashed #1e1e30" onmouseover="this.style.borderColor='#333'" onmouseout="this.style.borderColor='#1e1e30'">
+        <span style="color:#2a2a3a;font-size:16px">+</span>
+      </div>
+      <div style="background:#13131f;height:56px;padding:7px 8px;cursor:pointer;border:1px solid #1e1e30" onmouseover="this.style.borderColor='#c9a22760'" onmouseout="this.style.borderColor='#1e1e30'">
+        <div style="font-size:9px;color:#2ecc71;margin-bottom:3px;font-weight:500">allies</div>
+        <div style="font-size:8px;color:#555;line-height:1.4;overflow:hidden;max-height:30px">united against a common enemy, uneasy trust</div>
+      </div>
+      <!-- diagonal -->
+      <div style="background:#0d0d1a;height:56px;display:flex;align-items:center;justify-content:center">
+        <span style="color:#222;font-size:14px">×</span>
+      </div>
+
+    </div>
+    <!-- end matrix -->
+
+    <div style="margin-top:16px;font-size:9px;color:#333;font-family:monospace">
+      Empty cells (+ ) are clickable to add. Upper triangle is locked. Diagonal is blank.
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,93 @@
+<h2>How do you edit a cell?</h2>
+<p class="subtitle">Click a cell in the matrix — what happens next?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a14;padding:14px;font-family:monospace;position:relative">
+      <!-- Matrix with popover overlay -->
+      <div style="display:inline-grid;grid-template-columns:44px repeat(3,52px);gap:2px;font-size:9px;opacity:.5">
+        <div></div>
+        <div style="color:#555;text-align:center;padding:3px">ANNA</div>
+        <div style="color:#555;text-align:center;padding:3px">JAKE</div>
+        <div style="color:#555;text-align:center;padding:3px">MARIE</div>
+        <div style="color:#555;padding:3px;text-align:right">ANNA</div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center"><span style="color:#333">—</span></div>
+        <div style="background:#c9a22730;border:1px solid #c9a227;height:44px;padding:4px">
+          <div style="color:#c9a227;font-size:7px;margin-bottom:2px">rivals</div>
+          <div style="color:#666;font-size:7px">competing for the same role…</div>
+        </div>
+        <div style="background:#1a1a2e;height:44px;padding:4px">
+          <div style="color:#7b68ee;font-size:7px;margin-bottom:2px">mentor</div>
+          <div style="color:#666;font-size:7px">Anna taught her everything…</div>
+        </div>
+        <div style="color:#555;padding:3px;text-align:right">JAKE</div>
+        <div style="background:#0d0d1a;height:44px"></div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center"><span style="color:#333">—</span></div>
+        <div style="background:#1a1a2e;height:44px;padding:4px">
+          <div style="color:#e74c3c;font-size:7px;margin-bottom:2px">lovers</div>
+          <div style="color:#666;font-size:7px">secret affair…</div>
+        </div>
+      </div>
+      <!-- Popover -->
+      <div style="position:absolute;top:28px;left:80px;background:#13131f;border:1px solid #c9a227;border-radius:6px;padding:10px;width:160px;box-shadow:0 8px 24px rgba(0,0,0,.7);z-index:10">
+        <div style="font-size:8px;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">ANNA → JAKE</div>
+        <div style="font-size:8px;color:#555;margin-bottom:3px">Type</div>
+        <div style="background:#1a1a2e;padding:4px 6px;font-size:9px;color:#c9a227;margin-bottom:6px;border-radius:2px">rivals</div>
+        <div style="font-size:8px;color:#555;margin-bottom:3px">Description</div>
+        <div style="background:#1a1a2e;padding:4px 6px;font-size:9px;color:#888;border-radius:2px;line-height:1.4">competing for the same role, deep mutual respect underneath</div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;gap:6px">
+          <div style="font-size:8px;color:#555;padding:3px 6px;border:1px solid #333;border-radius:2px">cancel</div>
+          <div style="font-size:8px;color:#c9a227;padding:3px 6px;border:1px solid #c9a22760;border-radius:2px">save</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Popover on the cell</h3>
+      <p>Click a cell → a small popup appears over the matrix with editable Type and Description fields. Stays in context; disappears on save/cancel. Fast, no layout shift.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a14;padding:14px;font-family:monospace;display:flex;gap:8px">
+      <!-- Matrix (narrow) -->
+      <div style="display:inline-grid;grid-template-columns:44px repeat(3,48px);gap:2px;font-size:9px;align-self:start">
+        <div></div>
+        <div style="color:#555;text-align:center;padding:3px">ANNA</div>
+        <div style="color:#555;text-align:center;padding:3px">JAKE</div>
+        <div style="color:#555;text-align:center;padding:3px">MARIE</div>
+        <div style="color:#555;padding:3px;text-align:right">ANNA</div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center"><span style="color:#333">—</span></div>
+        <div style="background:#c9a22730;border:1px solid #c9a227;height:44px;padding:4px">
+          <div style="color:#c9a227;font-size:7px;margin-bottom:2px">rivals</div>
+          <div style="color:#666;font-size:7px">competing…</div>
+        </div>
+        <div style="background:#1a1a2e;height:44px;padding:4px">
+          <div style="color:#7b68ee;font-size:7px;margin-bottom:2px">mentor</div>
+          <div style="color:#666;font-size:7px">Anna taught…</div>
+        </div>
+        <div style="color:#555;padding:3px;text-align:right">JAKE</div>
+        <div style="background:#0d0d1a;height:44px"></div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center"><span style="color:#333">—</span></div>
+        <div style="background:#1a1a2e;height:44px;padding:4px">
+          <div style="color:#e74c3c;font-size:7px;margin-bottom:2px">lovers</div>
+          <div style="color:#666;font-size:7px">secret affair…</div>
+        </div>
+      </div>
+      <!-- Detail pane -->
+      <div style="flex:1;background:#0d0d1a;border:1px solid #1a1a2e;border-radius:4px;padding:10px">
+        <div style="font-size:8px;color:#c9a227;margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em">ANNA ↔ JAKE</div>
+        <div style="font-size:8px;color:#555;margin-bottom:4px;text-transform:uppercase">Type</div>
+        <input style="width:100%;background:#1a1a2e;border:none;color:#c9a227;font-size:9px;padding:4px 6px;margin-bottom:8px;border-radius:2px;box-sizing:border-box" value="rivals" readonly />
+        <div style="font-size:8px;color:#555;margin-bottom:4px;text-transform:uppercase">Description</div>
+        <div style="background:#1a1a2e;padding:6px;font-size:9px;color:#888;line-height:1.5;min-height:40px;border-radius:2px">competing for the same role, deep mutual respect underneath</div>
+        <div style="font-size:7px;color:#333;margin-top:8px">also appears in: Act 2 Sc 4, Act 3 Sc 1</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Detail pane beside the matrix</h3>
+      <p>Click a cell → a detail panel slides in to the right with full editing space. Same pattern as the Characters panel (list + detail). Room for richer content later.</p>
+    </div>
+  </div>
+
+</div>

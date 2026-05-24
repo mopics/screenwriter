@@ -1,0 +1,120 @@
+<h2>What lives inside each cell?</h2>
+<p class="subtitle">For characters ANNA, JAKE, MARIE, SAM — here's how each approach looks at the intersection</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a14;padding:16px;font-family:monospace">
+      <!-- Triangle matrix with label chips -->
+      <div style="display:inline-grid;grid-template-columns:56px repeat(4,52px);gap:2px;font-size:9px">
+        <!-- header row -->
+        <div></div>
+        <div style="color:#555;text-align:center;padding:3px;white-space:nowrap;overflow:hidden">ANNA</div>
+        <div style="color:#555;text-align:center;padding:3px;white-space:nowrap;overflow:hidden">JAKE</div>
+        <div style="color:#555;text-align:center;padding:3px;white-space:nowrap;overflow:hidden">MARIE</div>
+        <div style="color:#555;text-align:center;padding:3px;white-space:nowrap;overflow:hidden">SAM</div>
+        <!-- row ANNA -->
+        <div style="color:#555;padding:3px;text-align:right">ANNA</div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#333;font-size:8px">—</span>
+        </div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#c9a227;background:#c9a22720;border:1px solid #c9a22740;padding:2px 5px;border-radius:3px;font-size:8px;white-space:nowrap">rivals</span>
+        </div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#7b68ee;background:#7b68ee20;border:1px solid #7b68ee40;padding:2px 5px;border-radius:3px;font-size:8px;white-space:nowrap">mentor</span>
+        </div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#2ecc71;background:#2ecc7120;border:1px solid #2ecc7140;padding:2px 5px;border-radius:3px;font-size:8px;white-space:nowrap">allies</span>
+        </div>
+        <!-- row JAKE -->
+        <div style="color:#555;padding:3px;text-align:right">JAKE</div>
+        <div style="background:#0d0d1a;height:32px"></div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#333;font-size:8px">—</span>
+        </div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#e74c3c;background:#e74c3c20;border:1px solid #e74c3c40;padding:2px 5px;border-radius:3px;font-size:8px;white-space:nowrap">lovers</span>
+        </div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#3498db;background:#3498db20;border:1px solid #3498db40;padding:2px 5px;border-radius:3px;font-size:8px;white-space:nowrap">siblings</span>
+        </div>
+        <!-- row MARIE -->
+        <div style="color:#555;padding:3px;text-align:right">MARIE</div>
+        <div style="background:#0d0d1a;height:32px"></div>
+        <div style="background:#0d0d1a;height:32px"></div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#333;font-size:8px">—</span>
+        </div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#555;background:#55555520;border:1px solid #55555540;padding:2px 5px;border-radius:3px;font-size:8px;white-space:nowrap">strangers</span>
+        </div>
+        <!-- row SAM -->
+        <div style="color:#555;padding:3px;text-align:right">SAM</div>
+        <div style="background:#0d0d1a;height:32px"></div>
+        <div style="background:#0d0d1a;height:32px"></div>
+        <div style="background:#0d0d1a;height:32px"></div>
+        <div style="background:#1a1a2e;height:32px;display:flex;align-items:center;justify-content:center">
+          <span style="color:#333;font-size:8px">—</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Relationship label only</h3>
+      <p>Each cell shows a short label like "rivals", "mentor", "lovers". Color-coded by relationship type. Click a cell to edit the label. Fast to scan, astro-table feel.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0a0a14;padding:16px;font-family:monospace">
+      <div style="display:inline-grid;grid-template-columns:56px repeat(4,52px);gap:2px;font-size:9px">
+        <div></div>
+        <div style="color:#555;text-align:center;padding:3px">ANNA</div>
+        <div style="color:#555;text-align:center;padding:3px">JAKE</div>
+        <div style="color:#555;text-align:center;padding:3px">MARIE</div>
+        <div style="color:#555;text-align:center;padding:3px">SAM</div>
+        <div style="color:#555;padding:3px;text-align:right">ANNA</div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center"><span style="color:#333">—</span></div>
+        <div style="background:#1a1a2e;height:44px;padding:4px;overflow:hidden">
+          <div style="color:#c9a227;font-size:7px;margin-bottom:2px">rivals</div>
+          <div style="color:#666;font-size:7px;line-height:1.3;overflow:hidden">competing for the same role, deep mutual respect underneath</div>
+        </div>
+        <div style="background:#1a1a2e;height:44px;padding:4px;overflow:hidden">
+          <div style="color:#7b68ee;font-size:7px;margin-bottom:2px">mentor</div>
+          <div style="color:#666;font-size:7px;line-height:1.3;overflow:hidden">Anna taught her everything she knows</div>
+        </div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center">
+          <div style="color:#555;font-size:7px;text-align:center;padding:2px">click to add</div>
+        </div>
+        <div style="color:#555;padding:3px;text-align:right">JAKE</div>
+        <div style="background:#0d0d1a;height:44px"></div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center"><span style="color:#333">—</span></div>
+        <div style="background:#1a1a2e;height:44px;padding:4px;overflow:hidden">
+          <div style="color:#e74c3c;font-size:7px;margin-bottom:2px">lovers</div>
+          <div style="color:#666;font-size:7px;line-height:1.3">secret affair, neither knows about the other's past</div>
+        </div>
+        <div style="background:#1a1a2e;height:44px;padding:4px;overflow:hidden">
+          <div style="color:#3498db;font-size:7px;margin-bottom:2px">siblings</div>
+          <div style="color:#666;font-size:7px;line-height:1.3">estranged for 10 years</div>
+        </div>
+        <div style="color:#555;padding:3px;text-align:right">MARIE</div>
+        <div style="background:#0d0d1a;height:44px"></div>
+        <div style="background:#0d0d1a;height:44px"></div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center"><span style="color:#333">—</span></div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center">
+          <div style="color:#555;font-size:7px;text-align:center;padding:2px">click to add</div>
+        </div>
+        <div style="color:#555;padding:3px;text-align:right">SAM</div>
+        <div style="background:#0d0d1a;height:44px"></div>
+        <div style="background:#0d0d1a;height:44px"></div>
+        <div style="background:#0d0d1a;height:44px"></div>
+        <div style="background:#1a1a2e;height:44px;display:flex;align-items:center;justify-content:center"><span style="color:#333">—</span></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Label + description text</h3>
+      <p>Each cell shows both a label and a short description. Richer context at a glance. Cells are taller; matrix gets large with many characters.</p>
+    </div>
+  </div>
+
+</div>
