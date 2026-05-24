@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
 import { CharacterRelationsPanel } from './CharacterRelationsPanel'
 import type { Project } from '../../types/project'
 import type { Character } from '../../types/character'
@@ -63,5 +63,90 @@ describe('CharacterRelationsPanel', () => {
     const rels = [{ id: 'r1', fromId: 'anna', toId: 'ghost', label: 'rivals', description: '' }]
     render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => {}} />)
     expect(screen.queryByRole('button', { name: 'rivals' })).toBeNull()
+  })
+
+  it('opens a blank popover when empty cell is clicked', () => {
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => {}} />)
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    expect(screen.getByPlaceholderText('e.g. rivals')).toBeDefined()
+  })
+
+  it('save button is disabled when label is empty', () => {
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => {}} />)
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    const saveBtn = screen.getByRole('button', { name: 'save' })
+    expect(saveBtn.hasAttribute('disabled')).toBe(true)
+  })
+
+  it('calls onUpdate with new relationship on save', () => {
+    const onUpdate = vi.fn()
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={onUpdate} />)
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    fireEvent.change(screen.getByPlaceholderText('e.g. rivals'), { target: { value: 'rivals' } })
+    fireEvent.click(screen.getByRole('button', { name: 'save' }))
+    expect(onUpdate).toHaveBeenCalledOnce()
+    const patch = onUpdate.mock.calls[0][0]
+    expect(patch.characterRelationships).toHaveLength(1)
+    expect(patch.characterRelationships[0].label).toBe('rivals')
+    expect(patch.characterRelationships[0].id).toBeTruthy()
+  })
+
+  it('normalises pair so fromId < toId regardless of click order', () => {
+    const onUpdate = vi.fn()
+    // 'anna' < 'jake' alphabetically
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={onUpdate} />)
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    fireEvent.change(screen.getByPlaceholderText('e.g. rivals'), { target: { value: 'rivals' } })
+    fireEvent.click(screen.getByRole('button', { name: 'save' }))
+    const rel = onUpdate.mock.calls[0][0].characterRelationships[0]
+    expect(rel.fromId < rel.toId).toBe(true)
+  })
+
+  it('opens popover with existing data when chip is clicked', () => {
+    const rels = [{ id: 'r1', fromId: 'anna', toId: 'jake', label: 'rivals', description: 'competing' }]
+    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => {}} />)
+    fireEvent.click(screen.getByRole('button', { name: 'rivals' }))
+    expect(screen.getByDisplayValue('rivals')).toBeDefined()
+    expect(screen.getByDisplayValue('competing')).toBeDefined()
+  })
+
+  it('calls onUpdate with updated label on save', () => {
+    const onUpdate = vi.fn()
+    const rels = [{ id: 'r1', fromId: 'anna', toId: 'jake', label: 'rivals', description: 'competing' }]
+    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={onUpdate} />)
+    fireEvent.click(screen.getByRole('button', { name: 'rivals' }))
+    fireEvent.change(screen.getByDisplayValue('rivals'), { target: { value: 'friends' } })
+    fireEvent.click(screen.getByRole('button', { name: 'save' }))
+    const patch = onUpdate.mock.calls[0][0]
+    expect(patch.characterRelationships[0].label).toBe('friends')
+    expect(patch.characterRelationships[0].id).toBe('r1')
+  })
+
+  it('calls onUpdate removing entry on delete', () => {
+    const onUpdate = vi.fn()
+    const rels = [{ id: 'r1', fromId: 'anna', toId: 'jake', label: 'rivals', description: '' }]
+    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={onUpdate} />)
+    fireEvent.click(screen.getByRole('button', { name: 'rivals' }))
+    fireEvent.click(screen.getByRole('button', { name: 'delete' }))
+    expect(onUpdate).toHaveBeenCalledWith({ characterRelationships: [] })
+  })
+
+  it('closes popover and does not call onUpdate on cancel', () => {
+    const onUpdate = vi.fn()
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={onUpdate} />)
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    expect(screen.getByPlaceholderText('e.g. rivals')).toBeDefined()
+    fireEvent.click(screen.getByRole('button', { name: 'cancel' }))
+    expect(onUpdate).not.toHaveBeenCalled()
+    expect(screen.queryByPlaceholderText('e.g. rivals')).toBeNull()
+  })
+
+  it('shows + add in filled cells and opens a blank popover for a new entry', () => {
+    const rels = [{ id: 'r1', fromId: 'anna', toId: 'jake', label: 'rivals', description: '' }]
+    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => {}} />)
+    fireEvent.click(screen.getByRole('button', { name: '+ add' }))
+    const labelInput = screen.getByPlaceholderText('e.g. rivals') as HTMLInputElement
+    expect(labelInput).toBeDefined()
+    expect(labelInput.value).toBe('')
   })
 })
