@@ -7,6 +7,7 @@ import { SynopsisPanel } from '../components/panels/SynopsisPanel'
 import { CharactersPanel } from '../components/panels/CharactersPanel'
 import { ActsPanel } from '../components/panels/ActsPanel'
 import { ScenesPanel } from '../components/panels/ScenesPanel'
+import { CharacterRelationsPanel } from '../components/panels/CharacterRelationsPanel'
 import { RightPanel } from '../components/RightPanel'
 import { printScene } from '../utils/printScene'
 import type { Project } from '../types/project'
@@ -71,15 +72,17 @@ export function SceneEditor() {
         <span className="text-[#c9a227] text-xs font-bold tracking-widest">SCREENWRITER</span>
         <span className="text-[#555] text-sm">{project.title}</span>
         <div className="ml-auto flex items-center gap-4">
-          <select
-            value={fontSizes[activeSection]}
-            onChange={e => handleFontSizeChange(e.target.value as FontSize)}
-            className="bg-transparent text-xs text-[#555] outline-none cursor-pointer hover:text-[#c9a227] transition-colors"
-          >
-            {(Object.keys(fontSizeMap) as FontSize[]).map(s => (
-              <option key={s} value={s} className="bg-[#0a0a14]">{s}</option>
-            ))}
-          </select>
+          {activeSection !== 'characterRelations' && (
+            <select
+              value={fontSizes[activeSection as keyof typeof fontSizes]}
+              onChange={e => handleFontSizeChange(e.target.value as FontSize)}
+              className="bg-transparent text-xs text-[#555] outline-none cursor-pointer hover:text-[#c9a227] transition-colors"
+            >
+              {(Object.keys(fontSizeMap) as FontSize[]).map(s => (
+                <option key={s} value={s} className="bg-[#0a0a14]">{s}</option>
+              ))}
+            </select>
+          )}
           <button
             onClick={() => selectedScene && printScene(selectedScene)}
             disabled={!selectedScene}
@@ -96,6 +99,9 @@ export function SceneEditor() {
         {activeSection === 'characters' && <CharactersPanel {...panelProps} fontSize={fontSizes.characters} />}
         {activeSection === 'acts' && <ActsPanel {...panelProps} />}
         {activeSection === 'scenes' && <ScenesPanel {...panelProps} fontSize={fontSizes.scenes} />}
+        {activeSection === 'characterRelations' && (
+          <CharacterRelationsPanel project={project} onUpdate={onUpdate} />
+        )}
         <RightPanel {...panelProps} />
       </div>
     </div>

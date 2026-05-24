@@ -19,6 +19,7 @@ const mockProject: Project = {
   scenes: [],
   sketches: [],
   synopsis: 'A great film',
+  settings: { activePanel: 'synopsis', fontSizes: { scenes: 'sm', synopsis: 'sm', characters: 'sm', acts: 'sm' } },
 }
 
 function renderWithRouter(id: string) {
@@ -89,6 +90,13 @@ describe('SceneEditor', () => {
   it('renders SketchesPanel permanently on the right', () => {
     renderWithRouter('1')
     expect(screen.getByText('+ New Sketch')).toBeDefined()
+  })
+
+  it('switches to CharacterRelationsPanel when Relations icon is clicked', () => {
+    renderWithRouter('1')
+    fireEvent.click(screen.getByTitle('Relations'))
+    // mockProject has characters: [] so hint message appears
+    expect(screen.getByText(/Add at least two characters/)).toBeDefined()
   })
 
   it('resets selectedId to null when switching sections', () => {
