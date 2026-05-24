@@ -20,5 +20,5 @@ export type Project = {
   sketches: Sketch[]
   settings: ProjectSettings
   characterGroups?: CharacterGroup[]
-  characterRelationships?: { fromId: string, toId: string, description: string }[]
+  characterRelationships?: { id: string; fromId: string; toId: string; label: string; description: string }[]
 }

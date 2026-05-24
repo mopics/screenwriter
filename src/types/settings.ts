@@ -1,4 +1,4 @@
-export type SectionKey = 'synopsis' | 'characters' | 'acts' | 'scenes'
+export type SectionKey = 'synopsis' | 'characters' | 'acts' | 'scenes' | 'characterRelations'
 export const fontSizeMap = { sm: '12px', lg: '16px', xl: '20px', '2xl': '24px' } as const
 export type FontSize = keyof typeof fontSizeMap;
 export interface FontSizeSettings {
