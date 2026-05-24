@@ -3,10 +3,11 @@ import { describe, it, expect, vi } from 'vitest'
 import { SidePanel } from './SidePanel'
 
 describe('SidePanel', () => {
-  it('renders buttons for all 4 sections with title attributes', () => {
+  it('renders buttons for all 5 sections with title attributes', () => {
     render(<SidePanel activeSection="synopsis" onSectionChange={() => {}} />)
     expect(screen.getByTitle('Synopsis')).toBeDefined()
     expect(screen.getByTitle('Characters')).toBeDefined()
+    expect(screen.getByTitle('Relations')).toBeDefined()
     expect(screen.getByTitle('Acts')).toBeDefined()
     expect(screen.getByTitle('Scenes')).toBeDefined()
   })
@@ -18,6 +19,13 @@ describe('SidePanel', () => {
     expect(onSectionChange).toHaveBeenCalledWith('characters')
     fireEvent.click(screen.getByTitle('Scenes'))
     expect(onSectionChange).toHaveBeenCalledWith('scenes')
+  })
+
+  it('calls onSectionChange with characterRelations when Relations is clicked', () => {
+    const onSectionChange = vi.fn()
+    render(<SidePanel activeSection="synopsis" onSectionChange={onSectionChange} />)
+    fireEvent.click(screen.getByTitle('Relations'))
+    expect(onSectionChange).toHaveBeenCalledWith('characterRelations')
   })
 
   it('applies gold border to the active section button', () => {

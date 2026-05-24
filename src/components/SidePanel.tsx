@@ -6,6 +6,7 @@ type SectionItem = { key: SectionKey; icon: string; label: string }
 const SECTIONS: SectionItem[] = [
   { key: 'synopsis', icon: '📋', label: 'Synopsis' },
   { key: 'characters', icon: '🎭', label: 'Characters' },
+  { key: 'characterRelations', icon: '🕸️', label: 'Relations' },
   { key: 'acts', icon: '🗂️', label: 'Acts' },
   { key: 'scenes', icon: '🎬', label: 'Scenes' },
 ]
