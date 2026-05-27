@@ -7,7 +7,7 @@ import { longitudeToZodiac, isRetrograde } from './astroUtils'
 const sw = sweph as any
 const c = sw.constants
 
-sw.set_ephe_path('')
+sw.set_ephe_path('./astro-server/ephe/')
 
 export type ChartBody = {
   name: string
@@ -20,16 +20,16 @@ export type ChartBody = {
 type BodyDef = { name: string; id: number }
 
 const BODIES: BodyDef[] = [
-  { name: 'Sun',        id: c.SE_SUN },
-  { name: 'Moon',       id: c.SE_MOON },
-  { name: 'Mercury',    id: c.SE_MERCURY },
-  { name: 'Venus',      id: c.SE_VENUS },
-  { name: 'Mars',       id: c.SE_MARS },
-  { name: 'Jupiter',    id: c.SE_JUPITER },
-  { name: 'Saturn',     id: c.SE_SATURN },
-  { name: 'Uranus',     id: c.SE_URANUS },
-  { name: 'Neptune',    id: c.SE_NEPTUNE },
-  { name: 'Pluto',      id: c.SE_PLUTO },
+  { name: 'Sun', id: c.SE_SUN },
+  { name: 'Moon', id: c.SE_MOON },
+  { name: 'Mercury', id: c.SE_MERCURY },
+  { name: 'Venus', id: c.SE_VENUS },
+  { name: 'Mars', id: c.SE_MARS },
+  { name: 'Jupiter', id: c.SE_JUPITER },
+  { name: 'Saturn', id: c.SE_SATURN },
+  { name: 'Uranus', id: c.SE_URANUS },
+  { name: 'Neptune', id: c.SE_NEPTUNE },
+  { name: 'Pluto', id: c.SE_PLUTO },
   { name: 'North Node', id: c.SE_MEAN_NODE },
 ]
 
