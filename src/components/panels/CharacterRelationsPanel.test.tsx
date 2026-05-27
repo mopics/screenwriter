@@ -6,11 +6,11 @@ import type { Character } from '../../types/character'
 
 function makeChar(id: string, name: string): Character {
   return {
-    id, name, pronouns: [], groups: [], otherNames: [],
+    id, name, groups: '', otherNames: '',
     personality: '', physicalDescription: '', motivation: '',
     internalConflict: '', strengths: '', weaknesses: '',
     characterArc: '', dialogueStyle: '', backstory: '',
-    relationships: [], expandedFields: [],
+    expandedFields: [],
   }
 }
 
@@ -26,53 +26,52 @@ function makeProject(characters: Character[], rels: NonNullable<Project['charact
 
 const anna = makeChar('anna', 'ANNA')
 const jake = makeChar('jake', 'JAKE')
-const marie = makeChar('marie', 'MARIE')
 
 describe('CharacterRelationsPanel', () => {
   it('shows hint when 0 characters', () => {
-    render(<CharacterRelationsPanel project={makeProject([])} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([])} onUpdate={() => { }} />)
     expect(screen.getByText(/Add at least two characters/)).toBeDefined()
   })
 
   it('shows hint when 1 character', () => {
-    render(<CharacterRelationsPanel project={makeProject([anna])} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna])} onUpdate={() => { }} />)
     expect(screen.getByText(/Add at least two characters/)).toBeDefined()
   })
 
   it('renders character names in headers when 2+ characters', () => {
-    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => { }} />)
     // Name appears in column header and row label → at least 2 occurrences each
     expect(screen.getAllByText('ANNA').length).toBeGreaterThanOrEqual(1)
     expect(screen.getAllByText('JAKE').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders an empty-cell + button in the lower triangle', () => {
-    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => { }} />)
     // JAKE is row 1, ANNA is col 0 → lower triangle cell should have a '+' button
     expect(screen.getByRole('button', { name: '+' })).toBeDefined()
   })
 
   it('renders existing relationship chips', () => {
     const rels = [{ id: 'r1', fromId: 'anna', toId: 'jake', label: 'rivals', description: 'competing' }]
-    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => { }} />)
     expect(screen.getByRole('button', { name: 'rivals' })).toBeDefined()
   })
 
   it('ignores relationships for deleted characters', () => {
     // orphaned rel with id 'ghost' not in characters list
     const rels = [{ id: 'r1', fromId: 'anna', toId: 'ghost', label: 'rivals', description: '' }]
-    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => { }} />)
     expect(screen.queryByRole('button', { name: 'rivals' })).toBeNull()
   })
 
   it('opens a blank popover when empty cell is clicked', () => {
-    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => { }} />)
     fireEvent.click(screen.getByRole('button', { name: '+' }))
     expect(screen.getByPlaceholderText('e.g. rivals')).toBeDefined()
   })
 
   it('save button is disabled when label is empty', () => {
-    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna, jake])} onUpdate={() => { }} />)
     fireEvent.click(screen.getByRole('button', { name: '+' }))
     const saveBtn = screen.getByRole('button', { name: 'save' })
     expect(saveBtn.hasAttribute('disabled')).toBe(true)
@@ -104,7 +103,7 @@ describe('CharacterRelationsPanel', () => {
 
   it('opens popover with existing data when chip is clicked', () => {
     const rels = [{ id: 'r1', fromId: 'anna', toId: 'jake', label: 'rivals', description: 'competing' }]
-    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => { }} />)
     fireEvent.click(screen.getByRole('button', { name: 'rivals' }))
     expect(screen.getByDisplayValue('rivals')).toBeDefined()
     expect(screen.getByDisplayValue('competing')).toBeDefined()
@@ -143,7 +142,7 @@ describe('CharacterRelationsPanel', () => {
 
   it('shows + add in filled cells and opens a blank popover for a new entry', () => {
     const rels = [{ id: 'r1', fromId: 'anna', toId: 'jake', label: 'rivals', description: '' }]
-    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => {}} />)
+    render(<CharacterRelationsPanel project={makeProject([anna, jake], rels)} onUpdate={() => { }} />)
     fireEvent.click(screen.getByRole('button', { name: '+ add' }))
     const labelInput = screen.getByPlaceholderText('e.g. rivals') as HTMLInputElement
     expect(labelInput).toBeDefined()

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { SynopsisPanel } from './SynopsisPanel'
-import type { Project } from '../../types/project'
+import { defaultSettings, type Project } from '../../types/project'
 
 const baseProject: Project = {
   id: '1',
@@ -15,26 +15,27 @@ const baseProject: Project = {
   scenes: [],
   sketches: [],
   synopsis: 'Initial synopsis text',
+  settings: defaultSettings
 }
 
 describe('SynopsisPanel', () => {
   afterEach(() => vi.useRealTimers())
 
   it('renders existing synopsis text in the textarea', () => {
-    render(<SynopsisPanel project={baseProject} onUpdate={() => {}} />)
+    render(<SynopsisPanel project={baseProject} onUpdate={() => { }} fontSize={'lg'} />)
     expect(screen.getByDisplayValue('Initial synopsis text')).toBeDefined()
   })
 
   it('shows placeholder when synopsis is empty', () => {
     const { synopsis: _, ...rest } = baseProject
-    render(<SynopsisPanel project={rest as Project} onUpdate={() => {}} />)
+    render(<SynopsisPanel project={{ ...rest } as Project} onUpdate={() => { }} fontSize={'lg'} />)
     expect(screen.getByPlaceholderText('Write your synopsis…')).toBeDefined()
   })
 
   it('debounces onUpdate by 300ms', () => {
     vi.useFakeTimers()
     const onUpdate = vi.fn()
-    render(<SynopsisPanel project={baseProject} onUpdate={onUpdate} />)
+    render(<SynopsisPanel project={baseProject} onUpdate={onUpdate} fontSize={'lg'} />)
     const ta = screen.getByDisplayValue('Initial synopsis text')
     fireEvent.change(ta, { target: { value: 'New synopsis' } })
     expect(onUpdate).not.toHaveBeenCalled()
@@ -47,7 +48,7 @@ describe('SynopsisPanel', () => {
   it('fires only once if changed multiple times within 300ms', () => {
     vi.useFakeTimers()
     const onUpdate = vi.fn()
-    render(<SynopsisPanel project={baseProject} onUpdate={onUpdate} />)
+    render(<SynopsisPanel project={baseProject} onUpdate={onUpdate} fontSize={'lg'} />)
     const ta = screen.getByDisplayValue('Initial synopsis text')
     fireEvent.change(ta, { target: { value: 'A' } })
     fireEvent.change(ta, { target: { value: 'AB' } })

@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import type { Project } from '../../types/project'
-import type { Sketch } from '../../types/sketch'
-import { useCappedDebounce } from '../../hooks/useCappedDebounce'
-import { AutoTextarea } from '../AutoTextarea'
-import { SearchToolbar } from './SearchToolbar'
+import type { Project } from '../../../types/project'
+import type { Sketch } from '../../../types/sketch'
+import { useCappedDebounce } from '../../../hooks/useCappedDebounce'
+import { AutoTextarea } from '../../AutoTextarea'
+import { SearchToolbar } from '../SearchToolbar'
 
 type Props = {
   project: Project

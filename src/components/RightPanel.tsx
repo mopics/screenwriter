@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useResize } from '../hooks/useResize'
-import { SketchesPanel } from './panels/SketchesPanel'
-import { OutlinerPanel } from './panels/OutlinerPanel'
+import { SketchesPanel } from './panels/right-panel/SketchesPanel'
+import { OutlinerPanel } from './panels/right-panel/OutlinerPanel'
 import type { Project } from '../types/project'
 
 type Tab = 'sketches' | 'outliner'

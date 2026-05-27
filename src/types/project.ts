@@ -22,3 +22,13 @@ export type Project = {
   characterGroups?: CharacterGroup[]
   characterRelationships?: { id: string; fromId: string; toId: string; label: string; description: string }[]
 }
+
+export const defaultSettings: ProjectSettings = {
+  activePanel: 'synopsis',
+  fontSizes: {
+    scenes: 'lg',
+    synopsis: 'lg',
+    characters: 'lg',
+    acts: 'lg',
+  },
+}

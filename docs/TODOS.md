@@ -3,5 +3,5 @@
 * move global selects (e.g. font-size) to the top bar.
 
 
-# Features
-## Character Groups & Relationships -- Tension Matrix Panel.
+# Ensure TAB & type friendly use
+* After newly any added Item - auto-select it.

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { Project, Genre } from '../types/project'
+import { type Project, type Genre, defaultSettings } from '../types/project'
 
 const GENRES: Genre[] = ['FEATURE', 'SHORT', 'TV PILOT', 'MINI-SERIES']
 
@@ -32,6 +32,7 @@ export function NewProjectModal({ onClose, onCreate }: NewProjectModalProps) {
       acts: [],
       scenes: [],
       sketches: [],
+      settings: defaultSettings
     })
   }
 
@@ -60,11 +61,10 @@ export function NewProjectModal({ onClose, onCreate }: NewProjectModalProps) {
             <button
               key={g}
               onClick={() => setGenre(g)}
-              className={`px-3 py-1 rounded text-xs font-bold tracking-wider transition-colors ${
-                genre === g
+              className={`px-3 py-1 rounded text-xs font-bold tracking-wider transition-colors ${genre === g
                   ? 'bg-[#c9a227] text-black'
                   : 'bg-[#12121e] text-[#888] hover:text-[#c9a227]'
-              }`}
+                }`}
             >
               {g}
             </button>

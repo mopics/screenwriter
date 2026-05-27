@@ -14,6 +14,15 @@ const sampleProject: Project = {
   acts: [],
   scenes: [],
   sketches: [],
+  settings: {
+    activePanel: 'synopsis',
+    fontSizes: {
+      scenes: 'lg',
+      synopsis: 'lg',
+      characters: 'lg',
+      acts: 'lg',
+    },
+  }
 }
 
 function mockFetch(data: unknown, ok = true) {

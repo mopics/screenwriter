@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { ProjectCard } from './ProjectCard'
-import type { Project } from '../types/project'
+import { defaultSettings, type Project } from '../types/project'
 
 const project: Project = {
   id: 'abc',
@@ -15,6 +15,7 @@ const project: Project = {
   acts: [],
   scenes: [],
   sketches: [],
+  settings: defaultSettings
 }
 
 describe('ProjectCard', () => {

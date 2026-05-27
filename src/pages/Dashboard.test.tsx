@@ -25,6 +25,15 @@ const mockProject: Project = {
   acts: [],
   scenes: [],
   sketches: [],
+  settings: {
+    activePanel: 'synopsis',
+    fontSizes: {
+      scenes: 'lg',
+      synopsis: 'lg',
+      characters: 'lg',
+      acts: 'lg',
+    },
+  }
 }
 
 describe('Dashboard', () => {

@@ -1,9 +1,8 @@
 export type Character = {
-    id: string
-    name: string
-    pronouns: string[],
-    groups: string[],
-    otherNames: string[],
+    id: string,
+    name: string,
+    groups: string,
+    otherNames: string,
     personality: string,
     physicalDescription: string,
     motivation: string,
@@ -13,7 +12,6 @@ export type Character = {
     characterArc: string,
     dialogueStyle: string,
     backstory: string,
-    relationships: string[],
     expandedFields: string[]
 }
 

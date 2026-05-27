@@ -1,15 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CharactersPanel } from './CharactersPanel'
-import type { Project } from '../../types/project'
+import { defaultSettings, type Project } from '../../types/project'
 import type { Character } from '../../types/character'
 
 const alice: Character = {
   id: 'c1',
   name: 'Alice',
-  pronouns: ['She/Her'],
-  groups: [],
-  otherNames: [],
   personality: 'Driven',
   physicalDescription: 'Tall',
   motivation: 'Freedom',
@@ -19,8 +16,9 @@ const alice: Character = {
   characterArc: 'Learns to trust',
   dialogueStyle: 'Direct',
   backstory: 'Grew up alone',
-  relationships: [],
   expandedFields: [],
+  groups: '',
+  otherNames: ''
 }
 
 const baseProject: Project = {
@@ -34,38 +32,39 @@ const baseProject: Project = {
   acts: [],
   scenes: [],
   sketches: [],
+  settings: defaultSettings
 }
 
 describe('CharactersPanel', () => {
   beforeEach(() => vi.restoreAllMocks())
 
   it('renders character names in the list', () => {
-    render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId={null} onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={() => { }} selectedId={null} onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     expect(screen.getByText('Alice')).toBeDefined()
   })
 
   it('calls onSelectId with the character id when clicked', () => {
     const onSelectId = vi.fn()
-    render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId={null} onSelectId={onSelectId} />)
+    render(<CharactersPanel project={baseProject} onUpdate={() => { }} selectedId={null} onSelectId={onSelectId} fontSize={baseProject.settings.fontSizes.characters} />)
     fireEvent.click(screen.getByText('Alice'))
     expect(onSelectId).toHaveBeenCalledWith('c1')
   })
 
   it('shows editor form fields when a character is selected', () => {
-    render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={() => { }} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     expect(screen.getByDisplayValue('Alice')).toBeDefined()
     expect(screen.getByText('Driven')).toBeDefined()
   })
 
   it('shows placeholder prompt when no character is selected', () => {
-    render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId={null} onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={() => { }} selectedId={null} onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     expect(screen.getByText('Select a character to edit')).toBeDefined()
   })
 
   it('calls onUpdate and onSelectId when Add Character is clicked', () => {
     const onUpdate = vi.fn()
     const onSelectId = vi.fn()
-    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId={null} onSelectId={onSelectId} />)
+    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId={null} onSelectId={onSelectId} fontSize={baseProject.settings.fontSizes.characters} />)
     fireEvent.click(screen.getByText('+ Add Character'))
     expect(onUpdate).toHaveBeenCalledTimes(1)
     const patch = onUpdate.mock.calls[0][0]
@@ -77,7 +76,7 @@ describe('CharactersPanel', () => {
   it('calls onUpdate with filtered characters after delete confirmation', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true)
     const onUpdate = vi.fn()
-    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     fireEvent.click(screen.getByText('Delete character'))
     expect(onUpdate).toHaveBeenCalledWith({ characters: [] })
   })
@@ -85,14 +84,14 @@ describe('CharactersPanel', () => {
   it('does not delete character when confirm is cancelled', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(false)
     const onUpdate = vi.fn()
-    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     fireEvent.click(screen.getByText('Delete character'))
     expect(onUpdate).not.toHaveBeenCalled()
   })
 
   it('calls onUpdate with updated character when name input changes', () => {
     const onUpdate = vi.fn()
-    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     const nameInput = screen.getByDisplayValue('Alice')
     fireEvent.change(nameInput, { target: { value: 'Alicia' } })
     expect(onUpdate).toHaveBeenCalledWith({
@@ -101,18 +100,18 @@ describe('CharactersPanel', () => {
   })
 
   it('does not render textarea for collapsed fields', () => {
-    render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={() => { }} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     expect(screen.queryByDisplayValue('Driven')).toBeNull()
   })
 
   it('shows preview text for a collapsed textarea field with content', () => {
-    render(<CharactersPanel project={baseProject} onUpdate={() => {}} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={() => { }} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     expect(screen.getByText('Driven')).toBeDefined()
   })
 
   it('expands a textarea field when its label is clicked', () => {
     const onUpdate = vi.fn()
-    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={baseProject} onUpdate={onUpdate} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     fireEvent.click(screen.getByRole('button', { name: /personality/i }))
     expect(onUpdate).toHaveBeenCalledWith({
       characters: [{ ...alice, expandedFields: ['personality'] }],
@@ -123,7 +122,7 @@ describe('CharactersPanel', () => {
     const onUpdate = vi.fn()
     const aliceExpanded = { ...alice, expandedFields: ['personality'] }
     const project = { ...baseProject, characters: [aliceExpanded] }
-    render(<CharactersPanel project={project} onUpdate={onUpdate} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={project} onUpdate={onUpdate} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     expect(screen.getByDisplayValue('Driven')).toBeDefined()
     fireEvent.click(screen.getByRole('button', { name: /personality/i }))
     expect(onUpdate).toHaveBeenCalledWith({
@@ -133,7 +132,7 @@ describe('CharactersPanel', () => {
 
   it('shows "— empty —" for a collapsed textarea field with no content', () => {
     const aliceEmptyPersonality = { ...alice, personality: '' }
-    render(<CharactersPanel project={{ ...baseProject, characters: [aliceEmptyPersonality] }} onUpdate={() => {}} selectedId="c1" onSelectId={() => {}} />)
+    render(<CharactersPanel project={{ ...baseProject, characters: [aliceEmptyPersonality] }} onUpdate={() => { }} selectedId="c1" onSelectId={() => { }} fontSize={baseProject.settings.fontSizes.characters} />)
     expect(screen.getAllByText('— empty —').length).toBeGreaterThan(0)
   })
 })

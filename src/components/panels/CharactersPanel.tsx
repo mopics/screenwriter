@@ -22,9 +22,7 @@ export function CharactersPanel({ project, onUpdate, selectedId, onSelectId, fon
     const newChar: Character = {
       id: crypto.randomUUID(),
       name: '',
-      pronouns: [],
-      groups: [],
-      otherNames: [],
+      otherNames: '',
       personality: '',
       physicalDescription: '',
       motivation: '',
@@ -34,7 +32,7 @@ export function CharactersPanel({ project, onUpdate, selectedId, onSelectId, fon
       characterArc: '',
       dialogueStyle: '',
       backstory: '',
-      relationships: [],
+      groups: '',
       expandedFields: [],
     }
     onUpdate({ characters: [...project.characters, newChar] })
@@ -128,9 +126,7 @@ function CharacterEditor({ character, onChange, onDelete, fontSize }: EditorProp
 
   const fields: Array<{ key: keyof Character; label: string; type: 'input' | 'textarea' | 'csv' }> = [
     { key: 'name', label: 'Name', type: 'input' },
-    { key: 'pronouns', label: 'Pronouns', type: 'csv' },
-    { key: 'groups', label: 'Groups', type: 'csv' },
-    { key: 'otherNames', label: 'Other Names', type: 'csv' },
+    { key: 'otherNames', label: 'Other Names', type: 'input' },
     { key: 'personality', label: 'Personality', type: 'textarea' },
     { key: 'physicalDescription', label: 'Physical Description', type: 'textarea' },
     { key: 'motivation', label: 'Motivation', type: 'textarea' },
@@ -140,7 +136,7 @@ function CharacterEditor({ character, onChange, onDelete, fontSize }: EditorProp
     { key: 'characterArc', label: 'Character Arc', type: 'textarea' },
     { key: 'dialogueStyle', label: 'Dialogue Style', type: 'textarea' },
     { key: 'backstory', label: 'Backstory', type: 'textarea' },
-    { key: 'relationships', label: 'Relationships', type: 'csv' },
+    { key: 'groups', label: 'Groups', type: 'input' },
   ]
 
   return (
