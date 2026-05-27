@@ -7,28 +7,36 @@ type Props = { bodies: ChartBody[] }
 type Tooltip = { body: ChartBody; x: number; y: number }
 
 const SIGNS = [
-  'Aries','Taurus','Gemini','Cancer','Leo','Virgo',
-  'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces',
+  'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+  'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces',
 ]
 
 const SIGN_GLYPHS: Record<string, string> = {
-  Aries:'♈', Taurus:'♉', Gemini:'♊', Cancer:'♋',
-  Leo:'♌', Virgo:'♍', Libra:'♎', Scorpio:'♏',
-  Sagittarius:'♐', Capricorn:'♑', Aquarius:'♒', Pisces:'♓',
+  Aries: '♈', Taurus: '♉', Gemini: '♊', Cancer: '♋',
+  Leo: '♌', Virgo: '♍', Libra: '♎', Scorpio: '♏',
+  Sagittarius: '♐', Capricorn: '♑', Aquarius: '♒', Pisces: '♓',
 }
 
 const PLANET_GLYPHS: Record<string, string> = {
-  Sun:'☉', Moon:'☽', Mercury:'☿', Venus:'♀', Mars:'♂',
-  Jupiter:'♃', Saturn:'♄', Uranus:'♅', Neptune:'♆', Pluto:'♇',
-  'North Node':'☊', 'South Node':'☋',
+  Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀', Mars: '♂',
+  Jupiter: '♃', Saturn: '♄', Uranus: '♅', Neptune: '♆', Pluto: '♇',
+  'North Node': '☊', 'South Node': '☋',
 }
 
 // Element colour by sign (muted, dark-theme friendly)
 const ELEMENT_FILL: Record<string, string> = {
-  Aries:'#4a1515',    Leo:'#4a1515',    Sagittarius:'#4a1515',   // fire
-  Taurus:'#153320',   Virgo:'#153320',  Capricorn:'#153320',     // earth
-  Gemini:'#112840',   Libra:'#112840',  Aquarius:'#112840',      // air
-  Cancer:'#1a1240',   Scorpio:'#1a1240',Pisces:'#1a1240',        // water
+  Aries: '#4a1515', Leo: '#4a1515', Sagittarius: '#4a1515',   // fire
+  Taurus: '#153320', Virgo: '#153320', Capricorn: '#153320',     // earth
+  Gemini: '#112840', Libra: '#112840', Aquarius: '#112840',      // air
+  Cancer: '#1a1240', Scorpio: '#1a1240', Pisces: '#1a1240',        // water
+}
+
+// Geocentric distance order: 0 = Moon (closest), 9 = Pluto (furthest).
+// Nodes are mathematical points placed at the outer ring.
+const GEOCENTRIC_ORDER: Record<string, number> = {
+  Moon: 0, Mercury: 1, Venus: 2, Sun: 3, Mars: 4,
+  Jupiter: 5, Saturn: 6, Uranus: 7, Neptune: 8, Pluto: 9,
+  'North Node': 9, 'South Node': 9,
 }
 
 // Convention: 0° Aries at 9 o'clock (left), degrees increase counter-clockwise.
@@ -63,10 +71,11 @@ export function AstroWheel({ bodies }: Props) {
     if (!svgRef.current) return
     const cx = size / 2
     const cy = size / 2
-    const outerR      = size * 0.48
+    const outerR = size * 0.48
     const zodiacInner = size * 0.36
-    const planetR     = size * 0.29
-    const innerR      = size * 0.18
+    const innerR = size * 0.18
+    const minPlanetR = innerR + size * 0.015
+    const maxPlanetR = zodiacInner - size * 0.025
 
     const svg = d3.select(svgRef.current)
     svg.selectAll('*').remove()
@@ -75,7 +84,7 @@ export function AstroWheel({ bodies }: Props) {
     // ── Zodiac ring ──────────────────────────────────────────────
     SIGNS.forEach((sign, i) => {
       const startAngle = lonToSvgAngle((i + 1) * 30)
-      const endAngle   = lonToSvgAngle(i * 30)
+      const endAngle = lonToSvgAngle(i * 30)
 
       const pathData = d3.arc()({
         innerRadius: zodiacInner,
@@ -92,7 +101,7 @@ export function AstroWheel({ bodies }: Props) {
         .attr('stroke-width', 1)
 
       const midAngle = lonToSvgAngle((i + 0.5) * 30)
-      const glyphR   = (zodiacInner + outerR) / 2
+      const glyphR = (zodiacInner + outerR) / 2
       const { x, y } = polarToXY(cx, cy, glyphR, midAngle)
       g.append('text')
         .attr('x', x).attr('y', y)
@@ -135,15 +144,17 @@ export function AstroWheel({ bodies }: Props) {
 
     // ── Planet glyphs ────────────────────────────────────────────
     bodies.forEach(body => {
-      const angle     = lonToSvgAngle(body.longitude)
+      const distIdx = GEOCENTRIC_ORDER[body.name] ?? 5
+      const planetR = minPlanetR + (distIdx / 9) * (maxPlanetR - minPlanetR)
+      const angle = lonToSvgAngle(body.longitude)
       const { x, y } = polarToXY(cx, cy, planetR, angle)
-      const glyph     = PLANET_GLYPHS[body.name] ?? body.name[0]
-      const fontSize  = size * 0.052
+      const glyph = PLANET_GLYPHS[body.name] ?? body.name[0]
+      const fontSize = size * 0.052
 
       const planetG = g.append('g')
         .attr('transform', `translate(${x},${y})`)
         .attr('cursor', 'pointer')
-        .attr('opacity', 0.72)
+        .attr('opacity', 0.32)
         .on('mouseover mousemove', (event: MouseEvent) => {
           d3.select(event.currentTarget as Element).raise().attr('opacity', 1)
           const rect = containerRef.current?.getBoundingClientRect()
@@ -151,7 +162,7 @@ export function AstroWheel({ bodies }: Props) {
           setTooltip({ body, x: event.clientX - rect.left, y: event.clientY - rect.top })
         })
         .on('mouseleave', (event: MouseEvent) => {
-          d3.select(event.currentTarget as Element).attr('opacity', 0.72)
+          d3.select(event.currentTarget as Element).attr('opacity', 0.32)
           setTooltip(null)
         })
 
@@ -186,9 +197,9 @@ export function AstroWheel({ bodies }: Props) {
   const containerWidth = containerRef.current?.offsetWidth ?? 0
   const tooltipStyle = tooltip
     ? {
-        left: tooltip.x + 120 > containerWidth ? tooltip.x - 124 : tooltip.x + 12,
-        top: tooltip.y - 10,
-      }
+      left: tooltip.x + 120 > containerWidth ? tooltip.x - 124 : tooltip.x + 12,
+      top: tooltip.y - 10,
+    }
     : undefined
 
   return (
