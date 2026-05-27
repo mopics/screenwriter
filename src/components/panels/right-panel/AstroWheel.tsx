@@ -49,7 +49,8 @@ export function AstroWheel({ bodies }: Props) {
 
   useEffect(() => {
     if (!svgRef.current) return
-    const size = svgRef.current.clientWidth || 280
+    const vb = svgRef.current.viewBox.baseVal
+    const size = vb.width || 280
     const cx = size / 2
     const cy = size / 2
     const outerR      = size * 0.48
