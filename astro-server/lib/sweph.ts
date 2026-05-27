@@ -35,6 +35,10 @@ const BODIES: BodyDef[] = [
 
 const FLAGS = c.SEFLG_SWIEPH | c.SEFLG_SPEED
 
+export function dateToJulian(day: number, month: number, year: number, time: number): number {
+  return sw.julday(year, month, day, time, c.SE_GREG_CAL)
+}
+
 export function computeChart(julianDate: number, _lat: number, _lon: number): ChartBody[] {
   const results: ChartBody[] = []
 
