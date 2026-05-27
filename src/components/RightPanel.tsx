@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import { useResize } from '../hooks/useResize'
 import { SketchesPanel } from './panels/right-panel/SketchesPanel'
-import { OutlinerPanel } from './panels/right-panel/OutlinerPanel'
+import { TimelinePanel } from './panels/right-panel/TimelinePanel'
 import { AstroChartPanel } from './panels/right-panel/AstroChartPanel'
 import type { Project } from '../types/project'
 
-type Tab = 'sketches' | 'outliner' | 'astrochart'
+type Tab = 'sketches' | 'timeline' | 'astrochart'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'sketches',   label: 'Sketches' },
-  { key: 'outliner',   label: 'Outliner' },
+  { key: 'timeline',   label: 'Timeline' },
   { key: 'astrochart', label: 'AstroChart' },
 ]
 
@@ -52,8 +52,8 @@ export function RightPanel({ project, onUpdate, selectedId, onSelectId }: Props)
           onSelectId={onSelectId}
         />
       </div>
-      <div className={activeTab === 'outliner' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
-        <OutlinerPanel />
+      <div className={activeTab === 'timeline' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
+        <TimelinePanel />
       </div>
       <div className={activeTab === 'astrochart' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
         <AstroChartPanel />
