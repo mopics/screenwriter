@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import type { ChartBody } from '../../../types/astro'
 
@@ -46,11 +46,20 @@ function polarToXY(cx: number, cy: number, r: number, svgAngle: number) {
 
 export function AstroWheel({ bodies }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
+  const [size, setSize] = useState(280)
 
   useEffect(() => {
     if (!svgRef.current) return
-    const vb = svgRef.current.viewBox.baseVal
-    const size = vb.width || 280
+    const ro = new ResizeObserver(entries => {
+      const w = Math.round(entries[0].contentRect.width)
+      if (w > 0) setSize(w)
+    })
+    ro.observe(svgRef.current)
+    return () => ro.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!svgRef.current) return
     const cx = size / 2
     const cy = size / 2
     const outerR      = size * 0.48
@@ -156,15 +165,15 @@ export function AstroWheel({ bodies }: Props) {
           .text('ʀ')
       }
     })
-  }, [bodies])
+  }, [bodies, size])
 
   return (
     <svg
       ref={svgRef}
       data-testid="astro-wheel"
-      viewBox="0 0 280 280"
-      className="w-full max-w-[320px]"
-      style={{ aspectRatio: '1 / 1' }}
+      viewBox={`0 0 ${size} ${size}`}
+      className="w-full"
+      style={{ aspectRatio: '1 / 1', maxHeight: 'calc(100vh - 200px)' }}
     />
   )
 }
