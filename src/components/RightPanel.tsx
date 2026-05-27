@@ -44,16 +44,20 @@ export function RightPanel({ project, onUpdate, selectedId, onSelectId }: Props)
           </button>
         ))}
       </div>
-      {activeTab === 'sketches' && (
+      <div className={activeTab === 'sketches' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
         <SketchesPanel
           project={project}
           onUpdate={onUpdate}
           selectedId={selectedId}
           onSelectId={onSelectId}
         />
-      )}
-      {activeTab === 'outliner' && <OutlinerPanel />}
-      {activeTab === 'astrochart' && <AstroChartPanel />}
+      </div>
+      <div className={activeTab === 'outliner' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
+        <OutlinerPanel />
+      </div>
+      <div className={activeTab === 'astrochart' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
+        <AstroChartPanel />
+      </div>
     </div>
   )
 }
