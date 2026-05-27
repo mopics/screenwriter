@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n client,server -c cyan,yellow \"npm run dev:client\" \"npm run dev:server\"",
+    "dev": "concurrently -n client,server,astro -c cyan,yellow,magenta \"npm run dev:client\" \"npm run dev:server\" \"npm run dev:astro\"",
     "dev:client": "vite",
     "dev:server": "tsx watch server/index.ts",
+    "dev:astro": "tsx watch astro-server/index.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -19,7 +20,8 @@
     "hono": "^4.12.19",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-router-dom": "^7.15.1"
+    "react-router-dom": "^7.15.1",
+    "sweph": "^2.10.3-5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
