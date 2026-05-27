@@ -10,7 +10,7 @@ export function AutoTextarea({ value, style, ...props }: React.TextareaHTMLAttri
     ref.current.style.height = ref.current.scrollHeight + 'px'
   }
 
-  useEffect(() => { resize() }, [value, style?.fontSize]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { resize() }, [value, style?.fontSize])  
 
   useEffect(() => {
     if (!ref.current) return
