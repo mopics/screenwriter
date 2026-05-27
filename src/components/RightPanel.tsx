@@ -2,13 +2,15 @@ import { useState } from 'react'
 import { useResize } from '../hooks/useResize'
 import { SketchesPanel } from './panels/right-panel/SketchesPanel'
 import { OutlinerPanel } from './panels/right-panel/OutlinerPanel'
+import { AstroChartPanel } from './panels/right-panel/AstroChartPanel'
 import type { Project } from '../types/project'
 
-type Tab = 'sketches' | 'outliner'
+type Tab = 'sketches' | 'outliner' | 'astrochart'
 
 const TABS: { key: Tab; label: string }[] = [
-  { key: 'sketches', label: 'Sketches' },
-  { key: 'outliner', label: 'Outliner' },
+  { key: 'sketches',   label: 'Sketches' },
+  { key: 'outliner',   label: 'Outliner' },
+  { key: 'astrochart', label: 'AstroChart' },
 ]
 
 type Props = {
@@ -51,6 +53,7 @@ export function RightPanel({ project, onUpdate, selectedId, onSelectId }: Props)
         />
       )}
       {activeTab === 'outliner' && <OutlinerPanel />}
+      {activeTab === 'astrochart' && <AstroChartPanel />}
     </div>
   )
 }
