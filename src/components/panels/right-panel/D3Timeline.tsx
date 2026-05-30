@@ -58,7 +58,7 @@ export function formatYear(year: number): string {
     return `${+b.toFixed(1)} billion years ago`
   }
   if (year <= -1_000_000) return `${Math.round(-year / 1_000_000)} million BCE`
-  if (year <= -1_000) return `${(-year).toLocaleString()} BCE`
+  if (year <= -1_000) return `${(-year).toLocaleString('en-US')} BCE`
   if (year < 0) return `${-year} BCE`
   if (year === 0) return '1 BCE / 1 CE'
   return `${year} CE`
@@ -71,15 +71,142 @@ export function D3Timeline({ futureCutoff = 2100 }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [tooltip, setTooltip] = useState<Tooltip | null>(null)
 
-  // D3 rendering in Task 2
-  useEffect(() => {}, [futureCutoff])
+  useEffect(() => {
+    const svg = svgRef.current
+    const container = containerRef.current
+    if (!svg || !container) return
+
+    function draw() {
+      const W = container!.clientWidth
+      const H = container!.clientHeight
+      if (W === 0 || H === 0) return
+
+      const innerH = H - PAD.top - PAD.bottom
+      const innerW = W - PAD.left - PAD.right
+
+      const yBase = d3.scaleSymlog()
+        .domain([-13_800_000_000, futureCutoff])
+        .range([innerH, 0])
+        .constant(1)
+
+      const s = d3.select(svg)
+      s.attr('width', W).attr('height', H)
+      s.selectAll('*').remove()
+
+      s.append('defs').append('clipPath').attr('id', 'timeline-clip')
+        .append('rect').attr('x', 0).attr('y', 0)
+        .attr('width', innerW + PAD.right).attr('height', innerH)
+
+      const g = s.append('g').attr('transform', `translate(${PAD.left},${PAD.top})`)
+      const axisG = g.append('g')
+      const eventsG = g.append('g').attr('clip-path', 'url(#timeline-clip)')
+
+      function renderAxis(y: d3.ScaleSymLog<number, number>) {
+        axisG.selectAll('*').remove()
+        axisG.call(
+          d3.axisLeft(y).tickFormat((d: d3.NumberValue) => formatYear(+d))
+        )
+        axisG.select<SVGPathElement>('.domain').attr('stroke', '#333')
+        axisG.selectAll<SVGTextElement, unknown>('text').attr('fill', '#666').attr('font-size', '10px')
+        axisG.selectAll<SVGLineElement, unknown>('.tick line').attr('stroke', '#333')
+      }
+
+      function renderEvents(y: d3.ScaleSymLog<number, number>) {
+        eventsG.selectAll('*').remove()
+
+        const withPx = EVENTS.map(e => ({ ...e, py: y(e.year) }))
+        const sorted = [...withPx].sort((a, b) => a.py - b.py)
+
+        const showLabel = new Set<number>()
+        for (let i = 0; i < sorted.length; i++) {
+          const prev = sorted[i - 1]
+          const next = sorted[i + 1]
+          const clearPrev = !prev || Math.abs(sorted[i].py - prev.py) >= 12
+          const clearNext = !next || Math.abs(next.py - sorted[i].py) >= 12
+          if (clearPrev && clearNext) showLabel.add(sorted[i].year)
+        }
+
+        withPx.forEach(ev => {
+          const isNow = ev.year === NOW_YEAR
+          const color = CATEGORY_COLOR[ev.category]
+
+          if (isNow) {
+            eventsG.append('line')
+              .attr('x1', 0).attr('x2', innerW)
+              .attr('y1', ev.py).attr('y2', ev.py)
+              .attr('stroke', color).attr('stroke-width', 1)
+              .attr('stroke-dasharray', '4 3').attr('opacity', 0.5)
+          }
+
+          eventsG.append('circle')
+            .attr('cx', 0).attr('cy', ev.py)
+            .attr('r', isNow ? 6 : 4)
+            .attr('fill', color)
+            .attr('cursor', 'default')
+            .on('mouseenter', (event: MouseEvent) => {
+              const rect = containerRef.current?.getBoundingClientRect()
+              if (!rect) return
+              setTooltip({
+                year: ev.year, label: ev.label, category: ev.category,
+                x: event.clientX - rect.left, y: event.clientY - rect.top,
+              })
+            })
+            .on('mouseleave', () => setTooltip(null))
+
+          if (showLabel.has(ev.year)) {
+            eventsG.append('line')
+              .attr('x1', 0).attr('x2', 8)
+              .attr('y1', ev.py).attr('y2', ev.py)
+              .attr('stroke', color).attr('stroke-width', 1)
+              .attr('pointer-events', 'none')
+            eventsG.append('text')
+              .attr('x', 12).attr('y', ev.py)
+              .attr('dominant-baseline', 'central')
+              .attr('font-size', '10px')
+              .attr('fill', color)
+              .attr('pointer-events', 'none')
+              .text(ev.label)
+          }
+        })
+      }
+
+      renderAxis(yBase)
+      renderEvents(yBase)
+
+      const zoom = d3.zoom<SVGSVGElement, unknown>()
+        .scaleExtent([1, 1_000_000])
+        .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+          const zy = event.transform.rescaleY(yBase as unknown as any) as d3.ScaleSymLog<number, number>
+          renderAxis(zy)
+          renderEvents(zy)
+        })
+
+      d3.select(svg).call(zoom as any)
+        .on('dblclick.zoom', () => {
+          d3.select(svg).transition().duration(300).call(zoom.transform as any, d3.zoomIdentity)
+        })
+    }
+
+    draw()
+    const ro = new ResizeObserver(draw)
+    ro.observe(container)
+    return () => ro.disconnect()
+  }, [futureCutoff])
+
+  const containerW = containerRef.current?.offsetWidth ?? 0
+  const tooltipStyle = tooltip ? {
+    left: tooltip.x + 150 > containerW ? tooltip.x - 154 : tooltip.x + 12,
+    top:  tooltip.y - 10,
+  } : undefined
 
   return (
     <div ref={containerRef} className="flex-1 relative min-h-0 w-full overflow-hidden">
       <svg ref={svgRef} data-testid="d3-timeline" style={{ display: 'block' }} />
       {tooltip && (
-        <div className="absolute z-20 pointer-events-none rounded border border-[#c9a227]/40 bg-[#0d0d14]/95 shadow-lg px-3 py-2"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 10 }}>
+        <div
+          className="absolute z-20 pointer-events-none rounded border border-[#c9a227]/40 bg-[#0d0d14]/95 shadow-lg px-3 py-2"
+          style={tooltipStyle}
+        >
           <div className="text-[#c9a227] font-medium text-sm">{tooltip.label}</div>
           <div className="text-[#c8c8d8] text-xs mt-0.5">{formatYear(tooltip.year)}</div>
         </div>
