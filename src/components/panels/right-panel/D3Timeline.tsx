@@ -76,6 +76,9 @@ export function D3Timeline({ futureCutoff = 2100 }: Props) {
     const container = containerRef.current
     if (!svg || !container) return
 
+    // Create zoom ONCE per effect invocation
+    const zoom = d3.zoom<SVGSVGElement, unknown>().scaleExtent([1, 1_000_000])
+
     function draw() {
       const W = container!.clientWidth
       const H = container!.clientHeight
@@ -170,21 +173,22 @@ export function D3Timeline({ futureCutoff = 2100 }: Props) {
         })
       }
 
+      // Update zoom handler to close over the new yBase/groups calculated this draw
+      zoom.on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+        const zy = event.transform.rescaleY(yBase as unknown as d3.ZoomScale) as d3.ScaleSymLog<number, number>
+        renderAxis(zy)
+        renderEvents(zy)
+      })
+
+      // Re-apply zoom to svg after removing children (re-attaches wheel/touch listeners)
+      d3.select(svg!)
+        .call(zoom)
+        .on('dblclick.zoom', () => {
+          d3.select(svg!).transition().duration(300).call(zoom.transform, d3.zoomIdentity)
+        })
+
       renderAxis(yBase)
       renderEvents(yBase)
-
-      const zoom = d3.zoom<SVGSVGElement, unknown>()
-        .scaleExtent([1, 1_000_000])
-        .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
-          const zy = event.transform.rescaleY(yBase as unknown as any) as d3.ScaleSymLog<number, number>
-          renderAxis(zy)
-          renderEvents(zy)
-        })
-
-      d3.select(svg).call(zoom as any)
-        .on('dblclick.zoom', () => {
-          d3.select(svg).transition().duration(300).call(zoom.transform as any, d3.zoomIdentity)
-        })
     }
 
     draw()
