@@ -1,0 +1,92 @@
+<h2>Timeline Scale</h2>
+<p class="subtitle">How should 13.8 billion years fit in the panel? Each approach changes what's visible by default.</p>
+
+<div class="cards">
+  <div class="card" data-choice="symlog" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0d0d14;padding:16px;border-radius:6px;display:flex;justify-content:center">
+      <div style="display:flex;gap:12px;height:220px;align-items:stretch">
+        <!-- axis line -->
+        <div style="position:relative;width:3px;background:linear-gradient(180deg,#1a1a2e 0%,#c9a227 85%,#5588ff 97%,#44aa66 100%);border-radius:2px;flex-shrink:0">
+          <div style="position:absolute;top:0%;left:50%;transform:translateX(-50%);width:7px;height:7px;background:#333;border-radius:50%;border:1px solid #555"></div>
+          <div style="position:absolute;top:13%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#444;border-radius:50%"></div>
+          <div style="position:absolute;top:30%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#444;border-radius:50%"></div>
+          <div style="position:absolute;top:52%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#554422;border-radius:50%"></div>
+          <div style="position:absolute;top:72%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#c9a227;border-radius:50%"></div>
+          <div style="position:absolute;top:82%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#c9a227;border-radius:50%"></div>
+          <div style="position:absolute;top:90%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#c9a227;border-radius:50%"></div>
+          <div style="position:absolute;top:96%;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#5588ff;border-radius:50%"></div>
+          <div style="position:absolute;top:99%;left:50%;transform:translateX(-50%);width:6px;height:6px;background:#44aa66;border-radius:50%"></div>
+        </div>
+        <!-- labels -->
+        <div style="position:relative;width:130px;height:220px;font-size:9px;color:#888">
+          <span style="position:absolute;top:-1%">Big Bang (13.8 Gyr)</span>
+          <span style="position:absolute;top:11%;color:#555">First stars (13 Gyr)</span>
+          <span style="position:absolute;top:28%;color:#555">Earth forms (4.5 Gyr)</span>
+          <span style="position:absolute;top:50%;color:#665533">First life (3.8 Gyr)</span>
+          <span style="position:absolute;top:70%;color:#c9a227">Dinosaurs (230 Myr)</span>
+          <span style="position:absolute;top:80%;color:#c9a227">Mammals (66 Myr)</span>
+          <span style="position:absolute;top:88%;color:#c9a227">Humans (300 Kyr)</span>
+          <span style="position:absolute;top:94%;color:#5588ff">Now</span>
+          <span style="position:absolute;top:97%;color:#44aa66">2100 CE</span>
+          <div style="position:absolute;top:60%;right:0;left:0;border-top:1px dashed #333;padding-top:3px">
+            <span style="color:#333;font-size:8px">← all human history</span>
+            <span style="color:#333;font-size:8px;display:block">compressed here</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Logarithmic (symlog) scale</h3>
+      <p>Cosmic events spread across most of the axis. All of recorded human history is a thin band at the bottom. <strong>Zoom in to expand history.</strong> Scientifically accurate proportions.</p>
+      <div style="margin-top:8px;font-size:11px;color:#c9a227">Recommended — most physically honest</div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="eras" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0d0d14;padding:16px;border-radius:6px;display:flex;justify-content:center">
+      <div style="display:flex;gap:12px;height:220px;align-items:stretch">
+        <!-- era bands -->
+        <div style="position:relative;width:20px;flex-shrink:0;border-radius:3px;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:20%;background:#1a1a2e;display:flex;align-items:center;justify-content:center">
+            <span style="font-size:7px;color:#444;writing-mode:vertical-lr;transform:rotate(180deg)">COSMIC</span>
+          </div>
+          <div style="position:absolute;top:20%;left:0;right:0;height:20%;background:#161b22;display:flex;align-items:center;justify-content:center">
+            <span style="font-size:7px;color:#444;writing-mode:vertical-lr;transform:rotate(180deg)">GEO</span>
+          </div>
+          <div style="position:absolute;top:40%;left:0;right:0;height:20%;background:#14201a;display:flex;align-items:center;justify-content:center">
+            <span style="font-size:7px;color:#3a5a3a;writing-mode:vertical-lr;transform:rotate(180deg)">PALEO</span>
+          </div>
+          <div style="position:absolute;top:60%;left:0;right:0;height:20%;background:#241f14;display:flex;align-items:center;justify-content:center;border-top:1px solid #443322">
+            <span style="font-size:7px;color:#c9a227;writing-mode:vertical-lr;transform:rotate(180deg)">HIST</span>
+          </div>
+          <div style="position:absolute;top:80%;left:0;right:0;height:20%;background:#141824;display:flex;align-items:center;justify-content:center;border-top:1px solid #335">
+            <span style="font-size:7px;color:#5588ff;writing-mode:vertical-lr;transform:rotate(180deg)">MOD</span>
+          </div>
+        </div>
+        <!-- axis + labels -->
+        <div style="display:flex;gap:8px;height:220px">
+          <div style="position:relative;width:2px;background:#333;border-radius:2px">
+            <div style="position:absolute;top:10%;left:50%;transform:translateX(-50%);width:6px;height:6px;background:#333;border-radius:50%"></div>
+            <div style="position:absolute;top:30%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#3a5a3a;border-radius:50%"></div>
+            <div style="position:absolute;top:50%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#554422;border-radius:50%"></div>
+            <div style="position:absolute;top:65%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#c9a227;border-radius:50%"></div>
+            <div style="position:absolute;top:75%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#c9a227;border-radius:50%"></div>
+            <div style="position:absolute;top:88%;left:50%;transform:translateX(-50%);width:7px;height:7px;background:#5588ff;border-radius:50%"></div>
+          </div>
+          <div style="position:relative;width:100px;height:220px;font-size:9px;color:#888">
+            <span style="position:absolute;top:8%">Big Bang</span>
+            <span style="position:absolute;top:28%;color:#3a6a3a">Earth forms</span>
+            <span style="position:absolute;top:48%;color:#665533">Dinosaurs</span>
+            <span style="position:absolute;top:63%;color:#c9a227">Rome</span>
+            <span style="position:absolute;top:73%;color:#c9a227">WW2</span>
+            <span style="position:absolute;top:86%;color:#5588ff">Now → 2100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Segmented eras</h3>
+      <p>Fixed visual bands: Cosmic / Geological / Paleontological / Historical / Modern. Each era gets equal screen space regardless of actual duration. <strong>Zoom within eras only.</strong></p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,66 @@
+<h2>Timeline Orientation</h2>
+<p class="subtitle">How should the Big Bang → 2100 timeline be laid out?</p>
+
+<div class="cards">
+  <div class="card" data-choice="horizontal" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0d0d14;padding:20px;border-radius:6px;display:flex;flex-direction:column;gap:12px">
+      <!-- Horizontal mock -->
+      <div style="display:flex;align-items:center;gap:0;width:100%;position:relative;padding:24px 0 8px">
+        <div style="position:absolute;left:0;right:0;top:50%;height:2px;background:linear-gradient(90deg,#333,#c9a227,#c8c8d8);transform:translateY(-50%)"></div>
+        <!-- tick marks -->
+        <div style="position:absolute;left:0%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:2px">
+          <div style="width:1px;height:10px;background:#666"></div>
+          <span style="font-size:9px;color:#666;white-space:nowrap;margin-top:4px">Big Bang</span>
+        </div>
+        <div style="position:absolute;left:18%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:2px">
+          <div style="width:1px;height:8px;background:#555"></div>
+          <span style="font-size:9px;color:#555;white-space:nowrap;margin-top:4px">Earth forms</span>
+        </div>
+        <div style="position:absolute;left:55%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:2px">
+          <div style="width:1px;height:8px;background:#555"></div>
+          <span style="font-size:9px;color:#555;white-space:nowrap;margin-top:4px">Dinosaurs</span>
+        </div>
+        <div style="position:absolute;left:88%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:2px">
+          <div style="width:1px;height:8px;background:#c9a227"></div>
+          <span style="font-size:9px;color:#c9a227;white-space:nowrap;margin-top:4px">Rome</span>
+        </div>
+        <div style="position:absolute;left:98%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:2px">
+          <div style="width:1px;height:14px;background:#5588ff"></div>
+          <span style="font-size:9px;color:#5588ff;white-space:nowrap;margin-top:4px">Now</span>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:10px;color:#444;margin-top:8px">← scroll to zoom · drag to pan →</div>
+    </div>
+    <div class="card-body">
+      <h3>Horizontal</h3>
+      <p>Left = past, right = future. Natural reading direction. Wide panel utilization. Familiar for timelines.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="vertical" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0d0d14;padding:20px;border-radius:6px;display:flex;justify-content:center">
+      <!-- Vertical mock -->
+      <div style="display:flex;gap:16px;height:160px">
+        <div style="position:relative;width:2px;background:linear-gradient(180deg,#333,#c9a227,#c8c8d8);border-radius:2px">
+          <!-- dots -->
+          <div style="position:absolute;top:0%;left:50%;transform:translateX(-50%);width:6px;height:6px;background:#666;border-radius:50%"></div>
+          <div style="position:absolute;top:20%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#555;border-radius:50%"></div>
+          <div style="position:absolute;top:55%;left:50%;transform:translateX(-50%);width:5px;height:5px;background:#555;border-radius:50%"></div>
+          <div style="position:absolute;top:85%;left:50%;transform:translateX(-50%);width:6px;height:6px;background:#c9a227;border-radius:50%"></div>
+          <div style="position:absolute;top:97%;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#5588ff;border-radius:50%"></div>
+        </div>
+        <div style="position:relative;height:160px;width:90px">
+          <span style="position:absolute;top:-2%;font-size:9px;color:#666">Big Bang</span>
+          <span style="position:absolute;top:17%;font-size:9px;color:#555">Earth forms</span>
+          <span style="position:absolute;top:52%;font-size:9px;color:#555">Dinosaurs</span>
+          <span style="position:absolute;top:82%;font-size:9px;color:#c9a227">Rome</span>
+          <span style="position:absolute;top:94%;font-size:9px;color:#5588ff">Now</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Vertical</h3>
+      <p>Top = past, bottom = present. More label space per event. Scroll-to-zoom works naturally. Better for narrow panels.</p>
+    </div>
+  </div>
+</div>

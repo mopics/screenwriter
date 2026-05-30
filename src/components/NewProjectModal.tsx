@@ -54,7 +54,7 @@ export function NewProjectModal({ onClose, onCreate }: NewProjectModalProps) {
           onChange={e => setTitle(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSubmit()}
           placeholder="Untitled Script"
-          className="w-full bg-[#08080f] border border-[#2a2a3a] rounded px-3 py-2 text-[#f0f0f0] placeholder-[#444] text-sm mb-4 outline-none focus:border-[#c9a227]/50"
+          className="w-full border border-[#2a2a3a] rounded px-3 py-2 text-[#f0f0f0] placeholder-[#444] text-sm mb-4 outline-none focus:border-[#c9a227]/50"
         />
         <div className="flex flex-wrap gap-2 mb-6">
           {GENRES.map(g => (

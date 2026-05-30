@@ -175,6 +175,7 @@ function CharacterEditor({ character, onChange, onDelete, fontSize }: EditorProp
               )}
               {type === 'textarea' && isExpanded && (
                 <AutoTextarea
+                  autoFocus
                   value={local[key] as string}
                   onChange={e => update(key, (e.target as HTMLTextAreaElement).value)}
                   style={{ fontSize: fs }}

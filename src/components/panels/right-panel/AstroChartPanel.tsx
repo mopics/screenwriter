@@ -3,7 +3,7 @@ import { useAstroChart } from '../../../hooks/useAstroChart'
 import { AstroWheel } from './AstroWheel'
 import type { AstroChartParams } from '../../../types/astro'
 
-const INPUT_CLASS = 'bg-[#0d0d14] border border-[#1a1a2e] rounded px-2 py-1 text-xs text-[#c8c8d8] w-full'
+const INPUT_CLASS = 'border border-[#1a1a2e] rounded px-2 py-1 text-xs text-[#c8c8d8] w-full'
 const LABEL_CLASS = 'text-[10px] text-[#555] uppercase tracking-wide'
 
 export function AstroChartPanel() {

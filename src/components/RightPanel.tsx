@@ -53,7 +53,7 @@ export function RightPanel({ project, onUpdate, selectedId, onSelectId }: Props)
         />
       </div>
       <div className={activeTab === 'timeline' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
-        <TimelinePanel />
+        <TimelinePanel project={project} onUpdate={onUpdate} />
       </div>
       <div className={activeTab === 'astrochart' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
         <AstroChartPanel />

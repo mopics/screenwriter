@@ -219,14 +219,14 @@ function RelationshipPopover({ fromId, toId, entryId, existing, charNames, onSav
         onChange={e => setLabel(e.target.value)}
         placeholder="e.g. rivals"
         autoFocus
-        className="w-full bg-[#1a1a2e] border border-[#2a2a40] text-[#c9a227] text-[10px] px-1.5 py-1 mb-2 rounded-sm font-mono outline-none"
+        className="w-full border border-[#2a2a40] text-[#c9a227] text-[10px] px-1.5 py-1 mb-2 rounded-sm font-mono outline-none"
       />
       <label className="block text-[8px] text-[#555] mb-1 uppercase tracking-wider">Description</label>
       <AutoTextarea
         value={description}
         onChange={e => setDescription((e.target as HTMLTextAreaElement).value)}
         placeholder="Describe the relationship..."
-        className="w-full bg-[#1a1a2e] border border-[#2a2a40] text-[#888] text-[10px] px-1.5 py-1 mb-2.5 rounded-sm font-mono outline-none resize-none"
+        className="w-full border border-[#2a2a40] text-[#888] text-[10px] px-1.5 py-1 mb-2.5 rounded-sm font-mono outline-none resize-none"
       />
       <div className="flex justify-between items-center">
         {existing ? (

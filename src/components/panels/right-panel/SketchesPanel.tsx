@@ -129,11 +129,12 @@ function SketchCard({
       </div>
       {expanded && (
         <AutoTextarea
+          autoFocus
           value={value}
           onChange={handleChange}
           placeholder="Write your sketch…"
           style={{ resize: 'none' }}
-          className="w-full bg-[#0d0d14] text-[#c8c8d8] placeholder-[#444] outline-none text-sm leading-relaxed p-3 border-t border-[#1a1a2e]"
+          className="w-full text-[#c8c8d8] placeholder-[#444] outline-none text-sm leading-relaxed p-3 border-t border-[#1a1a2e]"
         />
       )}
     </div>

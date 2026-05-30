@@ -118,7 +118,7 @@ function ActEditor({ act, scenes, onChange, onMoveScene }: ActEditorProps) {
         <input
           value={title}
           onChange={handleTitleChange}
-          className="w-full bg-[#0f0f1a] border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
+          className="w-full border border-[#1a1a2e] rounded px-3 py-2 text-sm text-[#c8c8d8] outline-none focus:border-[#c9a227]/50"
         />
       </div>
       <div>

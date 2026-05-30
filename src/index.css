@@ -16,13 +16,30 @@
 
 input,
 textarea {
-  font-family: var(--font-text-input), monospace;
+  /*font-family: var(--font-text-input), monospace;*/
   color: var(--color-text-input);
-}
-
-textarea {
+  background: transparent;
   scrollbar-width: auto;
   scrollbar-color: #424242 transparent;
+}
+
+input:focus,
+textarea:focus {
+  background-color: var(--color-bg-input-focus);
+  outline: none;
+  box-shadow: none;
+}
+
+/* Remove number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 textarea::-webkit-scrollbar {
