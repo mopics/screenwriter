@@ -1,7 +1,9 @@
+import { D3Timeline } from './D3Timeline'
+
 export function TimelinePanel() {
   return (
-    <div className="flex-1 flex items-center justify-center">
-      <p className="text-[#555] text-sm">Timeline coming soon</p>
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <D3Timeline futureCutoff={2100} />
     </div>
   )
 }
