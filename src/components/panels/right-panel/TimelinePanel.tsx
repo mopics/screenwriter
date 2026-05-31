@@ -47,6 +47,12 @@ export function TimelinePanel({ project, onUpdate }: Props) {
     onUpdate({ timelineEvents: events })
   }
 
+  function handleDeleteEvent(index: number) {
+    const events = [...(extraEvents ?? [])]
+    events.splice(index, 1)
+    onUpdate({ timelineEvents: events })
+  }
+
   function handleClose() {
     setAdding(false)
     setLabel('')
@@ -63,7 +69,11 @@ export function TimelinePanel({ project, onUpdate }: Props) {
         showAllTrigger={showAllTrigger}
         onAddEvent={() => setAdding(true)}
         onUpdateEvent={handleUpdateEvent}
+        onDeleteEvent={handleDeleteEvent}
         onShowAll={() => setShowAllTrigger(v => v + 1)}
+        onSaveZoom={(k, y) => onUpdate({ timelineZoom: { k, y } })}
+        projectZoom={project.timelineZoom ?? null}
+        initialZoom={project.timelineZoom ?? null}
       />
 
       {adding && (

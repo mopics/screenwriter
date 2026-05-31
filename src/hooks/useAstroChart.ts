@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import type { ChartBody, AstroChartParams } from '../types/astro'
 
 type State = {
@@ -10,7 +10,7 @@ type State = {
 export function useAstroChart() {
   const [state, setState] = useState<State>({ bodies: null, loading: false, error: null })
 
-  async function fetchChart(params: AstroChartParams) {
+  const fetchChart = useCallback(async function fetchChart(params: AstroChartParams) {
     const { day, month, year, time, lat, lon } = params
     setState({ bodies: null, loading: true, error: null })
     const url = `http://localhost:3002/api/getAstroChart?day=${day}&month=${month}&year=${year}&time=${time}&lat=${lat}&lon=${lon}`
@@ -26,7 +26,7 @@ export function useAstroChart() {
     } catch {
       setState({ bodies: null, loading: false, error: 'Server unreachable' })
     }
-  }
+  }, [setState])
 
   return { ...state, fetchChart }
 }

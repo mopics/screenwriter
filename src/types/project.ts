@@ -23,6 +23,7 @@ export type Project = {
   characterGroups?: CharacterGroup[]
   characterRelationships?: { id: string; fromId: string; toId: string; label: string; description: string }[]
   timelineEvents?: TimelineEvent[]
+  timelineZoom?: { k: number; y: number }
 }
 
 export const defaultSettings: ProjectSettings = {

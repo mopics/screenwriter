@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAstroChart } from '../../../hooks/useAstroChart'
 import { AstroWheel } from './AstroWheel'
 import type { AstroChartParams } from '../../../types/astro'
@@ -12,6 +12,34 @@ export function AstroChartPanel() {
     day: 17, month: 4, year: 1998, time: 12,
     lat: 52.72518188565001, lon: 5.744661612787922,
   })
+
+  const isFirstRender = useRef(true)
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const maxWaitTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return }
+
+    if (!maxWaitTimer.current) {
+      maxWaitTimer.current = setTimeout(() => {
+        maxWaitTimer.current = null
+        if (debounceTimer.current) { clearTimeout(debounceTimer.current); debounceTimer.current = null }
+        fetchChart(params)
+      }, 2000)
+    }
+
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    debounceTimer.current = setTimeout(() => {
+      debounceTimer.current = null
+      if (maxWaitTimer.current) { clearTimeout(maxWaitTimer.current); maxWaitTimer.current = null }
+      fetchChart(params)
+    }, 500)
+
+    return () => {
+      if (debounceTimer.current) { clearTimeout(debounceTimer.current); debounceTimer.current = null }
+      if (maxWaitTimer.current) { clearTimeout(maxWaitTimer.current); maxWaitTimer.current = null }
+    }
+  }, [params, fetchChart])
 
   function set(field: keyof AstroChartParams) {
     return (e: React.ChangeEvent<HTMLInputElement>) =>

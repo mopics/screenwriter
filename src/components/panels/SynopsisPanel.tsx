@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Project } from '../../types/project'
 import { useCappedDebounce } from '../../hooks/useCappedDebounce'
 import { fontSizeMap, type FontSize } from '../../types/settings'
+import { AutoTextarea } from '../AutoTextarea'
 
 type Props = {
   project: Project
@@ -21,13 +22,14 @@ export function SynopsisPanel({ project, onUpdate, fontSize }: Props) {
 
   return (
     <div className="flex-1 p-6 flex flex-col scrollbar">
-      <textarea
+      <AutoTextarea
+        enableMarkdownToggle
         spellCheck="false"
         value={value}
         onChange={handleChange}
         placeholder="Write your synopsis…"
         style={{ fontSize: fontSizeMap[fontSize] }}
-        className="flex-1 w-full bg-transparent text-textInput placeholder-[#444] resize-none outline-none leading-relaxed"
+        className="w-full bg-transparent text-textInput placeholder-[#444] outline-none leading-relaxed"
       />
     </div>
   )

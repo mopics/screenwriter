@@ -17,7 +17,6 @@ type Props = {
 export function CharactersPanel({ project, onUpdate, selectedId, onSelectId, fontSize }: Props) {
   const { width, dragHandleProps } = useResize(208)
   const selectedChar = project.characters.find(c => c.id === selectedId) ?? null
-
   function addCharacter() {
     const newChar: Character = {
       id: crypto.randomUUID(),
@@ -176,6 +175,7 @@ function CharacterEditor({ character, onChange, onDelete, fontSize }: EditorProp
               {type === 'textarea' && isExpanded && (
                 <AutoTextarea
                   autoFocus
+                  enableMarkdownToggle
                   value={local[key] as string}
                   onChange={e => update(key, (e.target as HTMLTextAreaElement).value)}
                   style={{ fontSize: fs }}

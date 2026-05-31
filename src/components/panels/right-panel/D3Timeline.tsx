@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
+import { AutoTextarea } from '../../AutoTextarea'
 
 type Props = {
   futureCutoff?: number
@@ -8,6 +9,10 @@ type Props = {
   onAddEvent?: () => void
   onShowAll?: () => void
   onUpdateEvent?: (updated: TimelineEvent, index: number) => void
+  onDeleteEvent?: (index: number) => void
+  onSaveZoom?: (k: number, y: number) => void
+  projectZoom?: { k: number; y: number } | null
+  initialZoom?: { k: number; y: number } | null
 }
 
 export type TimeLineEventCategory = 'cosmic' | 'geological' | 'biological' | 'historical' | 'modern' | 'fictional' | 'birth' | 'death'
@@ -58,7 +63,7 @@ const EVENTS: TimelineEvent[] = [
   { year: -3_200, label: 'First writing', category: 'historical' },
   { year: -3_100, label: 'Ancient Egypt', category: 'historical' },
   { year: -800, label: 'Classical Greece', category: 'historical' },
-  { year: -44, label: 'Julius Caesar', category: 'historical' },
+  { year: -44, label: 'Julius Caesar', category: 'death' },
   { year: 476, label: 'Fall of Rome', category: 'historical' },
   { year: 1_492, label: 'Columbus', category: 'historical' },
   { year: 1_760, label: 'Industrial Revolution', category: 'historical' },
@@ -86,23 +91,45 @@ const PAD = { top: 20, right: 10, bottom: 20, left: 105 }
 
 type DrawScale = d3.ScaleLogarithmic<number, number> | d3.ScaleLinear<number, number>
 
-export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, onAddEvent, onShowAll, onUpdateEvent }: Props) {
+export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, onAddEvent, onShowAll, onUpdateEvent, onDeleteEvent, onSaveZoom, projectZoom, initialZoom }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const [tooltip, setTooltip] = useState<Tooltip | null>(null)
   const [detail, setDetail] = useState<Detail | null>(null)
-  const [editDraft, setEditDraft] = useState<{ label: string; year: string; description: string } | null>(null)
+  const [editDraft, setEditDraft] = useState<{ label: string; year: string; description: string; category: TimeLineEventCategory } | null>(null)
   const [logScale, setLogScale] = useState(true)
+  const zoomTransformRef = useRef<d3.ZoomTransform>(
+    initialZoom ? d3.zoomIdentity.translate(0, initialZoom.y).scale(initialZoom.k) : d3.zoomIdentity
+  )
+  const zoomBehaviorRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null)
+  const prevLogScaleRef = useRef(logScale)
+  const ALL_CATEGORIES = Object.keys(CATEGORY_COLOR) as TimeLineEventCategory[]
+  const [activeCategories, setActiveCategories] = useState<Set<TimeLineEventCategory>>(new Set(ALL_CATEGORIES))
+  const [filterOpen, setFilterOpen] = useState(false)
+  const filterRef = useRef<HTMLDivElement>(null)
+  const activeCategoriesKey = [...activeCategories].sort().join(',')
+
+  useEffect(() => {
+    function onPointerDown(e: PointerEvent) {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFilterOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [])
 
   useEffect(() => {
     const svg = svgRef.current
     const container = containerRef.current
     if (!svg || !container) return
 
-    // Reset zoom when scale type changes so the view starts fresh
-    d3.select(svg).property('__zoom', d3.zoomIdentity)
+    if (prevLogScaleRef.current !== logScale) {
+      prevLogScaleRef.current = logScale
+      zoomTransformRef.current = d3.zoomIdentity
+      d3.select(svg).property('__zoom', d3.zoomIdentity)
+    }
 
     const zoom = d3.zoom<SVGSVGElement, unknown>().scaleExtent([1, 1_000_000])
+    zoomBehaviorRef.current = zoom
 
     function draw() {
       const W = container!.clientWidth
@@ -164,7 +191,7 @@ export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, o
         const allEvents = [
           ...EVENTS.map(e => ({ ...e, extraIndex: -1 })),
           ...(extraEvents ?? []).map((e, i) => ({ ...e, extraIndex: i })),
-        ]
+        ].filter(e => activeCategories.has(e.category))
         const withPx = allEvents.map(e => ({ ...e, py: posYear(e.year) }))
         const sorted = [...withPx].sort((a, b) => a.py - b.py)
 
@@ -232,7 +259,7 @@ export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, o
                 extraIndex: extraIdx,
               })
               if (extraIdx !== undefined) {
-                setEditDraft({ label: ev.label, year: String(ev.year), description: ev.description ?? '' })
+                setEditDraft({ label: ev.label, year: String(ev.year), description: ev.description ?? '', category: ev.category })
               } else {
                 setEditDraft(null)
               }
@@ -255,6 +282,7 @@ export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, o
       }
 
       zoom.on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+        zoomTransformRef.current = event.transform
         const zy = event.transform.rescaleY(yBase as unknown as d3.ZoomScale) as unknown as DrawScale
         renderAxis(zy)
         renderEvents(makePosYear(zy))
@@ -263,18 +291,27 @@ export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, o
       d3.select(svg!)
         .call(zoom)
         .on('dblclick.zoom', () => {
+          zoomTransformRef.current = d3.zoomIdentity
           d3.select(svg!).transition().duration(300).call(zoom.transform, d3.zoomIdentity)
         })
 
-      renderAxis(yBase)
-      renderEvents(makePosYear(yBase))
+      const t = zoomTransformRef.current
+      d3.select(svg!).property('__zoom', t)
+      if (t.k !== 1 || t.y !== 0) {
+        const zy = t.rescaleY(yBase as unknown as d3.ZoomScale) as unknown as DrawScale
+        renderAxis(zy)
+        renderEvents(makePosYear(zy))
+      } else {
+        renderAxis(yBase)
+        renderEvents(makePosYear(yBase))
+      }
     }
 
     draw()
     const ro = new ResizeObserver(draw)
     ro.observe(container)
     return () => ro.disconnect()
-  }, [futureCutoff, logScale, extraEvents, showAllTrigger])
+  }, [futureCutoff, logScale, extraEvents, showAllTrigger, activeCategoriesKey])
 
   const containerW = containerRef.current?.offsetWidth ?? 0
   const tooltipStyle = tooltip ? {
@@ -295,12 +332,70 @@ export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, o
         >
           {logScale ? 'Logarithmic' : 'Linear'}
         </button>
+        <div ref={filterRef} style={{ position: 'relative' }}>
+          <button
+            onClick={() => setFilterOpen(v => !v)}
+            className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${activeCategories.size < ALL_CATEGORIES.length
+              ? 'border-[#c9a227]/50 text-[#c9a227] bg-[#c9a227]/5'
+              : 'border-[#333] text-[#555] hover:text-[#888]'}`}
+          >
+            {activeCategories.size < ALL_CATEGORIES.length ? `Filter (${activeCategories.size})` : 'Filter'}
+          </button>
+          {filterOpen && (
+            <div className="absolute top-full left-0 mt-1 z-50 bg-[#0d0d14] border border-[#1a1a2e] rounded shadow-xl py-1 min-w-[130px]">
+              <button
+                className="w-full text-left text-[10px] px-3 py-1 text-[#555] hover:text-[#888] border-b border-[#1a1a2e]"
+                onClick={() => setActiveCategories(new Set(ALL_CATEGORIES))}
+              >All</button>
+              <button
+                className="w-full text-left text-[10px] px-3 py-1 text-[#555] hover:text-[#888] border-b border-[#1a1a2e]"
+                onClick={() => setActiveCategories(new Set())}
+              >None</button>
+              {ALL_CATEGORIES.map(cat => (
+                <label key={cat} className="flex items-center gap-2 px-3 py-1 cursor-pointer hover:bg-white/5">
+                  <input
+                    type="checkbox"
+                    checked={activeCategories.has(cat)}
+                    onChange={() => setActiveCategories(prev => {
+                      const next = new Set(prev)
+                      next.has(cat) ? next.delete(cat) : next.add(cat)
+                      return next
+                    })}
+                    className="accent-[#c9a227]"
+                  />
+                  <span style={{ color: CATEGORY_COLOR[cat], fontSize: 10 }}>{cat}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
         {onShowAll && (
           <button
             onClick={onShowAll}
             className="text-[10px] px-2 py-0.5 rounded border border-[#333] text-[#555] hover:text-[#888] transition-colors"
           >
             Show All
+          </button>
+        )}
+        {onSaveZoom && (
+          <button
+            onClick={() => onSaveZoom(zoomTransformRef.current.k, zoomTransformRef.current.y)}
+            className="text-[10px] px-2 py-0.5 rounded border border-[#333] text-[#555] hover:text-[#888] transition-colors"
+          >
+            Save zoom
+          </button>
+        )}
+        {projectZoom && (
+          <button
+            onClick={() => {
+              if (!svgRef.current || !zoomBehaviorRef.current) return
+              const t = d3.zoomIdentity.translate(0, projectZoom.y).scale(projectZoom.k)
+              zoomTransformRef.current = t
+              d3.select(svgRef.current).transition().duration(300).call(zoomBehaviorRef.current.transform, t)
+            }}
+            className="text-[10px] px-2 py-0.5 rounded border border-[#333] text-[#555] hover:text-[#888] transition-colors"
+          >
+            Project zoom
           </button>
         )}
         {onAddEvent && (
@@ -327,15 +422,14 @@ export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, o
           const W = containerRef.current?.offsetWidth ?? 0
           const H = containerRef.current?.offsetHeight ?? 0
           const cardW = Math.max(160, W / 2 - 16)
-          const top = Math.min(detail.y, Math.max(0, H - 130))
           const isEditable = detail.extraIndex !== undefined
           const iBase = 'border border-[#1a1a2e] rounded px-2 py-1 text-xs text-[#c8c8d8] w-full focus:outline-none'
           const iClass = iBase
           const close = () => { setDetail(null); setEditDraft(null) }
           return (
             <div
-              className="absolute z-30 rounded border bg-[#0d0d14]/98 shadow-xl px-3 py-2.5 max-h-[60%] overflow-y-auto"
-              style={{ right: 8, top, width: cardW, borderColor: `${detail.color}55` }}
+              className="absolute z-30 rounded border bg-[#0d0d14]/98 shadow-xl px-3 py-2.5 overflow-y-auto"
+              style={{ right: 8, top: 8, width: cardW, maxHeight: H - 50, borderColor: `${detail.color}55` }}
               onClick={e => e.stopPropagation()}
             >
               <button className="absolute top-1.5 right-2 text-[#444] hover:text-[#888] text-xs leading-none" onClick={close}>✕</button>
@@ -356,14 +450,28 @@ export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, o
                     onChange={e => setEditDraft(d => d && ({ ...d, year: e.target.value }))}
                     placeholder="Year (negative = BCE)"
                   />
-                  <textarea
-                    className={`${iBase} resize-none`}
-                    rows={3}
+                  <AutoTextarea
+                    enableMarkdownToggle
+                    className={iBase}
                     value={editDraft.description}
-                    onChange={e => setEditDraft(d => d && ({ ...d, description: e.target.value }))}
+                    onChange={e => setEditDraft(d => d && ({ ...d, description: (e.target as HTMLTextAreaElement).value }))}
                     placeholder="Description…"
                   />
+                  <select
+                    className={`${iBase} bg-[#0a0a12]`}
+                    value={editDraft.category}
+                    onChange={e => setEditDraft(d => d && ({ ...d, category: e.target.value as TimeLineEventCategory }))}
+                    style={{ color: CATEGORY_COLOR[editDraft.category] }}
+                  >
+                    {ALL_CATEGORIES.map(cat => (
+                      <option key={cat} value={cat} style={{ color: CATEGORY_COLOR[cat] }}>{cat}</option>
+                    ))}
+                  </select>
                   <div className="flex gap-2 justify-end pt-1">
+                    <button
+                      className="text-[10px] px-2 py-0.5 rounded border border-red-900/50 text-red-500/60 hover:text-red-400 mr-auto transition-colors"
+                      onClick={() => { onDeleteEvent?.(detail.extraIndex!); close() }}
+                    >Delete</button>
                     <button className="text-[10px] px-2 py-0.5 rounded border border-[#333] text-[#555] hover:text-[#888]" onClick={close}>Cancel</button>
                     <button
                       className="text-[10px] px-2 py-0.5 rounded border text-[#c8c8d8] hover:bg-white/5 disabled:opacity-40"
@@ -373,7 +481,7 @@ export function D3Timeline({ futureCutoff = 2100, extraEvents, showAllTrigger, o
                         const y = parseInt(editDraft.year, 10)
                         if (isNaN(y) || !editDraft.label.trim()) return
                         onUpdateEvent?.({
-                          year: y, label: editDraft.label.trim(), category: detail.category,
+                          year: y, label: editDraft.label.trim(), category: editDraft.category,
                           ...(editDraft.description.trim() ? { description: editDraft.description.trim() } : {}),
                         }, detail.extraIndex!)
                         close()
